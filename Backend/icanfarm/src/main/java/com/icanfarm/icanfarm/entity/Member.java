@@ -2,17 +2,17 @@ package com.icanfarm.icanfarm.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @DynamicInsert
 @Entity
 @Getter
-@Builder
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -27,12 +27,18 @@ public class Member {
 
     @ColumnDefault("'ROLE_USER'")
     @Enumerated(EnumType.STRING)
-    private MemberRole role = MemberRole.ROLE_USER;
+    private MemberRole role;
 
     @ColumnDefault("'000000'")
     @Column(name = "rpi_pw")
     private String rpiPasswd;
 
     @OneToMany(mappedBy = "member")
-    private List<Hub> hubs = new ArrayList<>();
+    private List<Hub> hubs;
+
+    @Builder
+    public Member(String name, String email){
+        this.name = name;
+        this.email = email;
+    }
 }
