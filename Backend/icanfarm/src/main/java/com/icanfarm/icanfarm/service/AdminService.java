@@ -89,6 +89,21 @@ public class AdminService {
         int hubCnt = member.getHubs().size();
         hub.registerMember(member, hubCnt + 1);
 
+        if(rpiRegisterDTO.isTempModule())
+            hub.useTempModule();
+
+        if(rpiRegisterDTO.isHumidModule())
+            hub.useHumidModule();
+
+        if(rpiRegisterDTO.isCo2Module())
+            hub.useCo2Module();
+
+        if(rpiRegisterDTO.isFanModule())
+            hub.useFanModule();
+
+        if(rpiRegisterDTO.isLightModule())
+            hub.useLightModule();
+
         hubRepository.save(hub);
     }
 

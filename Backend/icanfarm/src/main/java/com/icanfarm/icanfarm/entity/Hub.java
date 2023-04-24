@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Hub {
 
-    private final int FIRST_HUB = 1;
-
     @Id
     @GeneratedValue
     private Long id;
@@ -68,14 +66,31 @@ public class Hub {
     @ColumnDefault("false")
     private Boolean isTemp;
 
+    @Column(name = "is_humid")
+    @ColumnDefault("false")
+    private Boolean isHumid;
+
+    @Column(name = "is_co2")
+    @ColumnDefault("false")
+    private Boolean isCo2;
+
+    @Column(name = "is_fan")
+    @ColumnDefault("false")
+    private Boolean isFan;
+
+    @Column(name = "is_light")
+    @ColumnDefault("false")
+    private Boolean isLight;
+
     @Column(name = "join_date")
+    @ColumnDefault("'2000-01-01 00:00:00'")
     private LocalDateTime joinDate;
 
     public void registerMember(Member member, int cnt){
         this.member = member;
         this.nickname = "hub" + cnt;
         this.joinDate = LocalDateTime.now();
-        if(cnt == FIRST_HUB) this.defaultHub = true;
+        if(cnt == 1) this.defaultHub = true;
     }
 
     public void deleteMember() {
@@ -83,6 +98,27 @@ public class Hub {
         this.nickname = null;
         this.joinDate = null;
         this.defaultHub = false;
+        cleanModuleInfo();
+        cleanModuleSettings();
+    }
+
+    private void cleanModuleSettings() {
+        this.tempMax = 0.0d;
+        this.tempMin = 0.0d;
+        this.humidMax = 0.0d;
+        this.humidMin = 0.0d;
+        this.co2Max = 0.0d;
+        this.co2Min = 0.0d;
+        this.lightTurnOffTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
+        this.lightTurnOnTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
+    }
+
+    private void cleanModuleInfo() {
+        this.isTemp = false;
+        this.isHumid = false;
+        this.isCo2 = false;
+        this.isFan = false;
+        this.isLight = false;
     }
 
     public void change2DefaultHub() {
@@ -92,5 +128,25 @@ public class Hub {
     @Builder
     public Hub(String serial){
         this.serial = serial;
+    }
+
+    public void useTempModule() {
+        this.isTemp = true;
+    }
+
+    public void useHumidModule() {
+        this.isHumid = true;
+    }
+
+    public void useCo2Module() {
+        this.isCo2 = true;
+    }
+
+    public void useFanModule() {
+        this.isFan = true;
+    }
+
+    public void useLightModule() {
+        this.isLight = true;
     }
 }
