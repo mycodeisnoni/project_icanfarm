@@ -13,6 +13,7 @@ import com.icanfarm.icanfarm.repository.HubRepository;
 import com.icanfarm.icanfarm.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class AdminService {
     private final MemberRepository memberRepository;
     private final HubRepository hubRepository;
+    private final BCryptPasswordEncoder encoder;
 
     private final int ZERO = 0;
 
@@ -41,6 +43,7 @@ public class AdminService {
         Member member = Member.builder()
                 .name(memberJoinDTO.getName())
                 .email(memberJoinDTO.getEmail())
+                .passwd(encoder.encode(memberJoinDTO.getPasswd()))
                 .build();
 
         memberRepository.save(member);

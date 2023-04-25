@@ -1,6 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active:
+      - local
+    group:
+      local:
+        - dev
+        - jwt
 
 ---
 
@@ -38,3 +43,15 @@ spring:
   config:
     activate:
       on-profile: prod
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: jwt
+
+jwt:
+  header: Authorization
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  access-token-validity-in-seconds: 600

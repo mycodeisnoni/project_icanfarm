@@ -25,6 +25,8 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
+    private String passwd;
+
     @ColumnDefault("'ROLE_USER'")
     @Enumerated(EnumType.STRING)
     private MemberRole role;
@@ -37,8 +39,10 @@ public class Member {
     private List<Hub> hubs;
 
     @Builder
-    public Member(String name, String email){
+    public Member(String name, String email, String passwd){
         this.name = name;
         this.email = email;
+        this.passwd = passwd;
     }
+
 }
