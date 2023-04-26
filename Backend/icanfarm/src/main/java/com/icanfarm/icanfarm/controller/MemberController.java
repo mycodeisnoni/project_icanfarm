@@ -20,8 +20,10 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody MemberJoinDTO memberJoinDTO){
-        memberService.login(memberJoinDTO);
+        Long memberId = memberService.login(memberJoinDTO);
 
-        return ResponseEntity.ok("로그인에 성공했습니다.");
+        return ResponseEntity.ok().body(memberId);
     }
+
+
 }

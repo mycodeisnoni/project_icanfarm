@@ -20,7 +20,7 @@ public class MemberService {
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public void login(MemberJoinDTO memberJoinDTO) {
+    public Long login(MemberJoinDTO memberJoinDTO) {
 
         Optional<Member> findMemberOpt = memberRepository.findByEmail(memberJoinDTO.getEmail());
 
@@ -38,6 +38,15 @@ public class MemberService {
 //        JwtToken token = jwtProvider.generateToken(authentication);
 
 //        return token;
-        return;
+        return findMember.getId();
+    }
+
+    public Member getMember(Long memberId){
+        Optional<Member> findMember = memberRepository.findById(memberId);
+
+        if(findMember.isEmpty())
+            throw new UserNotExistException();
+
+        return findMember.get();
     }
 }

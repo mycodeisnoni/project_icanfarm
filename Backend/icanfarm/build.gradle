@@ -31,13 +31,18 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-//	// database
+	// database
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
+	// mqtt
+	implementation 'org.springframework.boot:spring-boot-starter-integration'
+	implementation 'org.springframework.integration:spring-integration-mqtt'
+	implementation 'org.springframework.integration:spring-integration-http'
 
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.integration:spring-integration-test'
 }
 
 tasks.named('test') {

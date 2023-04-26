@@ -6,6 +6,7 @@ spring:
       local:
         - dev
         - jwt
+        - mqtt
 
 ---
 
@@ -55,3 +56,16 @@ jwt:
   header: Authorization
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   access-token-validity-in-seconds: 600
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: mqtt
+
+mqtt:
+  username: i_can_farm
+  password: 1234
+  url: tcp://k8a206.p.ssafy.io:3333
+  topic: test_mqtt
