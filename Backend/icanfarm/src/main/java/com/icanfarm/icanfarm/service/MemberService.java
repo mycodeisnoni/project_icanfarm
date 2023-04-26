@@ -6,7 +6,6 @@ import com.icanfarm.icanfarm.exception.PasswdInvalidException;
 import com.icanfarm.icanfarm.exception.UserNotExistException;
 import com.icanfarm.icanfarm.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    private final TokenProvider tokenManager;
 
     public Long login(MemberJoinDTO memberJoinDTO) {
 
@@ -31,6 +31,8 @@ public class MemberService {
 
         if(!encoder.matches(memberJoinDTO.getPasswd(), findMember.getPasswd()))
             throw new PasswdInvalidException();
+
+        String token = tokenManager.createToken(findMember.getId());
 
 //        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(findMember.getId(), null, AuthorityUtils.NO_AUTHORITIES);
 //        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
