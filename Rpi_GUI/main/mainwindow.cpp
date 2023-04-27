@@ -83,3 +83,9 @@ void MainWindow::changeCloudColor() // 누르면 색 바뀌도록
     ui->show_co2->setStyleSheet(color_arr[cloud_point]);
 }
 
+void MainWindow::changeValue() // 변경 버튼 눌렀을 때
+{
+    login_D = new login_dialog;
+    login_D->setModal(true); // modal로 열어야 로그인 창 열려있을 때 메인 창 건드리지 못 함
+    login_D->exec();
+}

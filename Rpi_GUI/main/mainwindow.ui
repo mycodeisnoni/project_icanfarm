@@ -904,6 +904,25 @@ image: url(:/images/logo logout.png);</string>
      <string>cloud</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="change_btn">
+    <property name="geometry">
+     <rect>
+      <x>298</x>
+      <y>419</y>
+      <width>200</width>
+      <height>42</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:1 rgba(61, 91, 101, 255));
+border: 0px;
+color: rgb(255, 255, 255);
+font: 24px;</string>
+    </property>
+    <property name="text">
+     <string>변경</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="enabled">
@@ -1105,6 +1124,22 @@ image: url(:/images/logo logout.png);</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>change_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeValue()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>456</x>
+     <y>470</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>459</x>
+     <y>542</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>upTemperature()</slot>
@@ -1118,5 +1153,6 @@ image: url(:/images/logo logout.png);</string>
   <slot>changeSunColor()</slot>
   <slot>changeWindColor()</slot>
   <slot>changeCloudColor()</slot>
+  <slot>changeValue()</slot>
  </slots>
 </ui>

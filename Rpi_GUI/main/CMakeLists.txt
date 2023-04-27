@@ -18,7 +18,10 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        mainwindow.ui        
+        mainwindow.ui
+        login_dialog.cpp
+        login_dialog.h
+        login_dialog.ui
         Resources/recent_logo.qrc
         Resources/setting_logo.qrc
         Resources/logout_logo.qrc
