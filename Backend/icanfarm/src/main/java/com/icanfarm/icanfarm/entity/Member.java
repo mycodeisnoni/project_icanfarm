@@ -45,4 +45,7 @@ public class Member {
         this.passwd = passwd;
     }
 
+    public void changeRPiPasswd(String pw){
+        this.rpiPasswd = pw;
+    }
 }

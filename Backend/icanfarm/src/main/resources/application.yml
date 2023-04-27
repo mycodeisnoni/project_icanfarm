@@ -31,12 +31,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  # MongoDB
+  data:
+    mongodb:
+      host: localhost
+      port: 27020
+      authentication-database: farmData
+      database: farmData
+      username: icfarm
+      password: a206
 
 logging:
   level:
     org.hibernate:
       type.descriptor.sql: trace
       SQL: DEBUG
+    com.icanfarm.icanfarm: DEBUG
 
 ---
 
