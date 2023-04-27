@@ -15,8 +15,7 @@ void sigint_handler(int signal) {
     is_running = 0;
 }
 
-class callback : public virtual mqtt::callback,
-    public virtual mqtt::iaction_listener {
+class callback : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
 public:
     void connection_lost(const std::string& cause) override {
         std::cout << "Connection lost: " << cause << std::endl;
