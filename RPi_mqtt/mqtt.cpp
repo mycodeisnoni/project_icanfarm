@@ -7,8 +7,8 @@
 
 const std::string SERVER_ADDRESS("tcp://k8a206.p.ssafy.io:3333");
 const std::string CLIENT_ID("1");
-const std::string PUB_TOPIC("test/" + CLIENT_ID);
-const std::string SUB_TOPIC("test/" + CLIENT_ID);
+const std::string PUB_TOPIC("rpi/test/" + CLIENT_ID);
+const std::string SUB_TOPIC("server/test/" + CLIENT_ID);
 const int QOS = 1;
 
 volatile int is_running = 1;
