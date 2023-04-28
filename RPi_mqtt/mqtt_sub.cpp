@@ -4,8 +4,8 @@
 #include "mqtt/async_client.h"
 
 const std::string SERVER_ADDRESS("tcp://k8a206.p.ssafy.io:3333");
-const std::string CLIENT_ID("RPi-subscribe");
-const std::string TOPIC("test");
+const std::string CLIENT_ID("1");
+const std::string TOPIC("test/" + CLIENT_ID);
 const int QOS = 1;
 
 volatile sig_atomic_t is_running = 1;
@@ -15,7 +15,7 @@ void sigint_handler(int signal) {
     is_running = 0;
 }
 
-class callback : public virtual mqtt::callback, public virtual mqtt::iaction_listener {
+class callback : public virtual mqtt::callback {
 public:
     void connection_lost(const std::string& cause) override {
         std::cout << "Connection lost: " << cause << std::endl;
@@ -24,15 +24,24 @@ public:
     void message_arrived(mqtt::const_message_ptr msg) override {
         std::cout << "Message arrived on topic '" << msg->get_topic() << "': " << msg->to_string() << std::endl;
     }
-
-    void on_failure(const mqtt::token& tok) override {
-        std::cout << "Failure: " << tok.get_message_id() << std::endl;
-    }
-
-    void on_success(const mqtt::token& tok) override {
-        std::cout << "Success: " << tok.get_message_id() << std::endl;
-    }
 };
+
+void subscribe(mqtt::async_client& client) {
+    std::cout << "Subscribing to topic '" << TOPIC << "'..." << std::endl;
+    try {
+        mqtt::token_ptr subtok = client.subscribe(TOPIC, QOS);
+        subtok->wait();
+        std::cout << "Subscribed." << std::endl;
+    }
+    catch (const mqtt::exception& exc) {
+        std::cerr << "Error: " << exc.what() << std::endl;
+        return;
+    }
+
+    while (is_running) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
 
 int main(int argc, char* argv[]) {
     // 강제종료(ctrl + C) 시그널 등록
@@ -56,20 +65,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Subscribing to topic '" << TOPIC << "'..." << std::endl;
-    try {
-        mqtt::token_ptr subtok = client.subscribe(TOPIC, QOS);
-        subtok->wait();
-        std::cout << "Subscribed." << std::endl;
-    }
-    catch (const mqtt::exception& exc) {
-        std::cerr << "Error: " << exc.what() << std::endl;
-        return 1;
-    }
-
-    while (is_running) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+    subscribe(client);
 
     // 구독 해지
     mqtt::token_ptr unsubtok = client.unsubscribe(TOPIC);

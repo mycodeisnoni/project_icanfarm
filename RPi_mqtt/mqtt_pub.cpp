@@ -5,8 +5,8 @@
 #include "mqtt/async_client.h"
 
 const std::string SERVER_ADDRESS("tcp://k8a206.p.ssafy.io:3333");
-const std::string CLIENT_ID("RPi-publish");
-const std::string TOPIC("test");
+const std::string CLIENT_ID("1");
+const std::string TOPIC("test/" + CLIENT_ID);
 const int QOS = 1;
 
 class callback : public virtual mqtt::callback {
@@ -61,3 +61,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
