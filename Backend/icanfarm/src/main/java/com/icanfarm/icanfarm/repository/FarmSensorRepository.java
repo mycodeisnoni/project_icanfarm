@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface FarmSensorRepository extends MongoRepository<FarmSensor, Long> {
 
-    @Query("{ 'name' : ?0, 'hubId' : ?1, 'date' : { $gte: ?2, $lte: ?3,  } }")
-//    @Query("{ 'name' : ?0, 'hubId' : ?1, 'date' : { $gte: ?2, $lte: ?3,  $mod : [ 30 , 0 ] } }")
+    @Query("{ 'name' : ?0, 'hubId' : ?1, 'date' : { $gte: ?2, $lte: ?3  } }")
     List<FarmSensor> findFarmSensorsByNameAndHubId(@Param("name") String name, @Param("hubId") Long hubId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

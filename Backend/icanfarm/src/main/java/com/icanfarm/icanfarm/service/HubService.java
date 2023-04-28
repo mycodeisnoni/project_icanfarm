@@ -85,12 +85,16 @@ public class HubService {
         LocalDateTime start = end.minus(7, ChronoUnit.DAYS);
 
         List<FarmSensor> sensors = farmSensorRepository.findFarmSensorsByNameAndHubId(sensor, id, start, end);
-        return sensors.stream().map(
-                s -> InfoValueDTO.builder()
-                        .date(s.getDate())
-                        .value(s.getValue())
-                        .build()
-        ).collect(Collectors.toList());
+        return sensors.stream()
+                .filter(
+                        s -> s.getDate().getMinute() == 0 || s.getDate().getMinute() == 30
+                )
+                .map(
+                        s -> InfoValueDTO.builder()
+                                .date(s.getDate())
+                                .value(s.getValue())
+                                .build()
+                ).collect(Collectors.toList());
     }
 
     public String getHubInfo(Long hubId) throws Exception{
