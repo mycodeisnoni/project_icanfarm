@@ -1,31 +1,10 @@
 .<template>
-  <div>
-    <h2>AccountBoard</h2>
-    <div>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled">Disabled</a>
-        </li>
-      </ul>
+  <div class="container">
+    <div class="item1">
+      <div class="ICON"></div>
     </div>
-  </div>
-</nav>
+    <div class="item2">
+
     </div>
   </div>
 </template>
@@ -36,6 +15,26 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.container{
+  display: flex;
+}
+.item1{
+  background-color: rgb(169, 201, 202);
+  position: absolute;
+  width: 20%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.ICON{
+  background-image: url("../assets/ICON_ICANFARM.png");
+  background-size: cover;
+  position: relative;
+  width: 100px;
+  height: 110px;
+  top: 1%;
+  Left: 1%;
+}
 
 </style>

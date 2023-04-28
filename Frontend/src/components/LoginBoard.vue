@@ -6,7 +6,7 @@
       <!-- <div class="a">start</div> -->
     </div>
     <div class="item2">
-      <div>
+      <div class="login">
         <tbody>
           <tr>
             <th><label class="label" for="id">ID</label></th>
@@ -17,10 +17,10 @@
             <th><input type="password" placeholder="Password" v-model="userPassword"></th>
           </tr>
         </tbody>
-        <div class="d-grid gap-2 col-6 mx-auto">
+        <div class="d-grid gap-2 col-6">
           <button class="login_btn" type="button" @click="goToMonitor">로그인</button>
         </div>
-        <div style="text-align:center;">
+        <div>
           <router-link to="/account" style="text-decoration: none; color: white; font-size: 36px;">ID 조회 | PW 조회 | RPi PW 조회</router-link>
         </div>
         <router-view/>
@@ -55,44 +55,44 @@ export default {
 }
 .item1{
   background-color: rgb(169, 201, 202);
-  margin: 0%;
+  position: absolute;
   width: 40%;
-  /* position: absolute; */
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 .ICON{
-  border: solid 1px black;
+  /* border: solid 1px black; */
   background-image: url("../assets/ICON_ICANFARM.png");
   background-size: cover;
   width: 135px;
   height: 154px;
-  position: relative;
-  top: 35px;
-  left: 32px;
+  top: 2%;
+  left: 2%;
 }
 .LOGO{
-  border: solid 1px black;
+  /* border: solid 1px black; */
   background-image: url("../assets/LOGO_ICANFARM.png");
   background-size: cover;
   width: 325px;
   height: 554px;
-  position: relative;
-  top: 276px;
-  left: 182px;
-}
-.a{
-  border: solid 1px black;
-  position: relative;
-  top: 276px;
-  left: 182px;
+  margin: auto;
 }
 .item2{
   background-color: rgb(45, 51, 51);
+  position: absolute;
   width: 60%;
+  height: 100%;
+  top: 0;
+  left: 40%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
+.login{
+  border: 1px white solid;
 
+}
 .label{
   color: white;
   font-size: 64px;
