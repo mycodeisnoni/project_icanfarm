@@ -1,5 +1,7 @@
 package com.icanfarm.icanfarm.config;
 
+import com.icanfarm.icanfarm.service.DataSensingService;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +20,17 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.handler.annotation.Header;
 
 @Configuration
+@RequiredArgsConstructor
 public class MqttConfig {
+
+    private final DataSensingService dataSensingService;
     private static String MQTT_USERNAME = "web_server";
     private static String MQTT_PASSWORD = "1234";
 
     private static String MQTT_CLIENT_ID = MqttAsyncClient.generateClientId();
-    private static String TOPIC_FILTER = "test_mqtt";
+    private static String TOPIC_TEMP = "temp/#";
+    private static String TOPIC_HUMID = "humid/#";
+    private static String TOPIC_ADMIN = "admin/power/+";
     private static String BROKER_URL = "tcp://k8a206.p.ssafy.io:3333";
     private static String[] URLS = {BROKER_URL};
 
@@ -53,7 +60,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inboundChannel() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MQTT_CLIENT_ID, TOPIC_FILTER);
+                new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MQTT_CLIENT_ID, TOPIC_TEMP, TOPIC_HUMID, TOPIC_ADMIN);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -68,6 +75,20 @@ public class MqttConfig {
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
             System.out.println("!!!!! Topic:" + topic);
             System.out.println("!!!!! Payload" + message.getPayload());
+            String[] subTopics = topic.split("/");
+            if(subTopics[0].equals("admin")){
+                if(subTopics[1].equals("power")){
+                    dataSensingService.sendSensorData(Long.parseLong(subTopics[2]));
+                }else{
+                    dataSensingService.sendHubPasswod(Long.parseLong(subTopics[2]));
+                }
+            }else{
+                if(subTopics[1].equals("data")){
+                    dataSensingService.saveSensorData(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
+                }else if(subTopics[1].equals("target")){
+                    dataSensingService.saveSensorSetting(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
+                }
+            }
         };
     }
 

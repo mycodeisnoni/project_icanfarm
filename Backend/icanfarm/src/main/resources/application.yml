@@ -47,6 +47,7 @@ logging:
       type.descriptor.sql: trace
       SQL: DEBUG
     com.icanfarm.icanfarm: DEBUG
+    org.mongodb.driver: INFO
 
 ---
 

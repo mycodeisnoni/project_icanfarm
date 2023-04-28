@@ -1,5 +1,6 @@
 package com.icanfarm.icanfarm.entity;
 
+import com.icanfarm.icanfarm.dto.StartingDataDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,34 +29,28 @@ public class Hub {
 
     private String nickname;
 
-    @Column(name = "temp_max")
+    @Column(name = "temp_setting")
     @ColumnDefault("0.0")
-    private Double tempMax;
+    private Double tempSetting;
 
-    @Column(name = "temp_min")
+    @Column(name = "temp_rate")
     @ColumnDefault("0.0")
-    private Double tempMin;
+    private Double tempRate;
 
-    @Column(name = "humid_max")
+    @Column(name = "humid_setting")
     @ColumnDefault("0.0")
-    private Double humidMax;
+    private Double humidSetting;
 
-    @Column(name = "humid_min")
+    @Column(name = "humid_rate")
     @ColumnDefault("0.0")
-    private Double humidMin;
-
-    @Column(name = "co2_max")
-    @ColumnDefault("0.0")
-    private Double co2Max;
-
-    @Column(name = "co2_min")
-    @ColumnDefault("0.0")
-    private Double co2Min;
+    private Double humidRate;
 
     @Column(name = "light_turn_on")
+    @ColumnDefault("'2000-01-01 00:00:00'")
     private LocalDateTime lightTurnOnTime;
 
     @Column(name = "light_turn_off")
+    @ColumnDefault("'2000-01-01 00:00:00'")
     private LocalDateTime lightTurnOffTime;
 
     @Column(name = "default_hub")
@@ -83,7 +78,6 @@ public class Hub {
     private Boolean isLight;
 
     @Column(name = "join_date")
-    @ColumnDefault("'2000-01-01 00:00:00'")
     private LocalDateTime joinDate;
 
     public void registerMember(Member member, int cnt){
@@ -97,18 +91,16 @@ public class Hub {
         this.member = null;
         this.nickname = null;
         this.joinDate = null;
-        this.defaultHub = false;
+        this.defaultHub = Boolean.FALSE;
         cleanModuleInfo();
         cleanModuleSettings();
     }
 
     private void cleanModuleSettings() {
-        this.tempMax = 0.0d;
-        this.tempMin = 0.0d;
-        this.humidMax = 0.0d;
-        this.humidMin = 0.0d;
-        this.co2Max = 0.0d;
-        this.co2Min = 0.0d;
+        this.tempSetting = 0.0d;
+        this.tempRate = 0.0d;
+        this.humidSetting = 0.0d;
+        this.humidRate = 0.0d;
         this.lightTurnOffTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
         this.lightTurnOnTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
     }
@@ -122,7 +114,7 @@ public class Hub {
     }
 
     public void change2DefaultHub() {
-        this.defaultHub = true;
+        this.defaultHub = Boolean.TRUE;
     }
 
     @Builder
@@ -148,5 +140,30 @@ public class Hub {
 
     public void useLightModule() {
         this.isLight = true;
+    }
+
+    public void changeTempSettings(Double maxValue, Double minValue) {
+        this.tempSetting = maxValue;
+        this.tempRate = minValue;
+    }
+
+    public void changeHumidSettings(Double maxValue, Double minValue) {
+        this.humidSetting = maxValue;
+        this.humidRate = minValue;
+    }
+
+    public void changeLightSettings(LocalDateTime startTime, LocalDateTime endTime) {
+        this.lightTurnOnTime = startTime;
+        this.lightTurnOffTime = endTime;
+    }
+
+    public String getInitialInfoJson() throws Exception{
+        return StartingDataDTO.builder()
+                .tempSettingValue(this.tempSetting)
+                .tempRangeValue(this.tempRate)
+                .humidSettingValue(this.humidSetting)
+                .humidRangeValue(this.humidRate)
+                .build()
+                .toJsonString();
     }
 }

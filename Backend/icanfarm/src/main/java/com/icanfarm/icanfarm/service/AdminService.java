@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminService {
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final HubRepository hubRepository;
     private final BCryptPasswordEncoder encoder;
 
@@ -82,12 +83,12 @@ public class AdminService {
 
     public void registerRPi2Member(RPiRegisterDTO rpiRegisterDTO) {
 
-        Optional<Hub> opHub = hubRepository.findUnusedOne();
+        Optional<Hub> opHub = hubRepository.findFirstByMemberIsNull();
 
         if(opHub.isEmpty()) throw new NoRpiExistException();
 
         Hub hub = opHub.get();
-        Member member = memberRepository.findById(rpiRegisterDTO.getMemberId()).get();
+        Member member = memberService.getMember(rpiRegisterDTO.getMemberId());
 
         int hubCnt = member.getHubs().size();
         hub.registerMember(member, hubCnt + 1);
@@ -117,18 +118,19 @@ public class AdminService {
         Boolean flag = hub.getDefaultHub();
         hub.deleteMember();
 
+        hubRepository.save(hub);
+
         if(flag)
             setNewDefaultHub(member);
-
-        hubRepository.save(hub);
     }
 
     private void setNewDefaultHub(Member member) {
         if(member.getHubs().size() == ZERO)
             return;
 
-        member.getHubs().get(0).change2DefaultHub();
+        Hub hub = member.getHubs().get(0);
+        hub.change2DefaultHub();
+        hubRepository.save(hub);
     }
-
 
 }

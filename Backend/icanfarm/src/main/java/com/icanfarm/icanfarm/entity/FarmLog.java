@@ -7,20 +7,20 @@ import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
 
 @Getter
-public class FarmSensor {
-
+public class FarmLog {
     @Id
     private String id;
+
     private Long hubId;
-    private String name;
-    private Double value;
+    private FarmLogLevel level;
     private LocalDateTime date;
+    private String message;
 
     @Builder
-    public FarmSensor(Long hubId, String name, Double value){
+    public FarmLog(Long hubId, FarmLogLevel level, LocalDateTime date, String message){
         this.hubId = hubId;
-        this.name = name;
-        this.value = value;
-        this.date = LocalDateTime.now();
+        this.level = level;
+        this.date = date;
+        this.message = message;
     }
 }

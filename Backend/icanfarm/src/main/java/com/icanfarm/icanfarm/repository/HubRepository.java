@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface HubRepository extends JpaRepository<Hub, Long> {
     Optional<Hub> findBySerial(String serial);
 
-    @Query("select h from Hub h where h.member is NULL")
-    Optional<Hub> findUnusedOne();
+//    @Query("select h from Hub h where h.member is NULL")
+    Optional<Hub> findFirstByMemberIsNull();
 
     @Query("select h from Hub h where h.member = :member and h.defaultHub = true")
     Optional<Hub> findDefaultHub(@Param("member") Member member);
