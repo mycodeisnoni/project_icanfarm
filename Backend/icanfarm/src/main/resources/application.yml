@@ -89,6 +89,9 @@ logging:
     com.icanfarm.icanfarm: DEBUG
     org.mongodb.driver: INFO
 
+server:
+  port: 8090
+
 ---
 
 spring:
