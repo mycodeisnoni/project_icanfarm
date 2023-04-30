@@ -86,7 +86,9 @@ public class MqttConfig {
                 if(subTopics[1].equals("data")){
                     dataSensingService.saveSensorData(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
                 }else if(subTopics[1].equals("target")){
-                    dataSensingService.saveSensorSetting(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
+                    dataSensingService.saveSensorTargetValue(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
+                }else if(subTopics[1].equals("range")){
+                    dataSensingService.saveSensorRnageValue(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
                 }
             }
         };
@@ -109,6 +111,9 @@ public class MqttConfig {
 
     @MessagingGateway(defaultRequestChannel = "mqttOutboundChannel")
     public interface OutboundGateway {
+        static final String INITIAL_TOPIC = "server/admin/power/";
+        static final String PASSWORD_TOPIC = "server/admin/password/";
+
         void sendToMqtt(String payload, @Header(MqttHeaders.TOPIC) String topic);
     }
 }

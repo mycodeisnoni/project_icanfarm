@@ -1,5 +1,6 @@
 package com.icanfarm.icanfarm.service;
 
+import com.icanfarm.icanfarm.config.MqttConfig;
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class HubService {
     private final HubRepository hubRepository;
     private final FarmSensorRepository farmSensorRepository;
+    private final MqttConfig.OutboundGateway outboundGateway;
 
     private Hub getHub(Long id){
         Optional<Hub> hubOpt = hubRepository.findById(id);
@@ -30,38 +32,6 @@ public class HubService {
             throw new HubNotExistException();
 
         return hubOpt.get();
-    }
-
-    public SettingValueDTO getTempSettings(Long id) {
-        Hub hub = getHub(id);
-
-        return SettingValueDTO.builder()
-                .maxValue(hub.getTempSetting())
-                .minValue(hub.getTempRate())
-                .build();
-    }
-
-    public void setTempSetting(Long id, SettingValueDTO settingValueDTO) {
-        Hub hub = getHub(id);
-
-        hub.changeTempSettings(settingValueDTO.getMaxValue(), settingValueDTO.getMinValue());
-        hubRepository.save(hub);
-    }
-
-    public SettingValueDTO getHumidSetting(Long id) {
-        Hub hub = getHub(id);
-
-        return SettingValueDTO.builder()
-                .maxValue(hub.getHumidSetting())
-                .minValue(hub.getHumidRate())
-                .build();
-    }
-
-    public void setHumidSetting(Long id, SettingValueDTO settingValueDTO) {
-        Hub hub = getHub(id);
-
-        hub.changeHumidSettings(settingValueDTO.getMaxValue(), settingValueDTO.getMinValue());
-        hubRepository.save(hub);
     }
 
     public LightSettingDTO getLightSetting(Long id) {
@@ -80,7 +50,7 @@ public class HubService {
         hubRepository.save(hub);
     }
 
-    public List<InfoValueDTO> getTempInfo(String sensor, Long id) {
+    public List<InfoValueDTO> getDataInfo(String sensor, Long id) {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minus(7, ChronoUnit.DAYS);
 
@@ -107,12 +77,51 @@ public class HubService {
         return hub.getMember().getPasswd();
     }
 
-    public void changeHubSensorSetting(Long hubId, String name, Double value) {
+    public SettingValueDTO getTargetValue(String name, Long hubId) {
         Hub hub = getHub(hubId);
         if(name.equals("temp")){
-            hub.changeTempSettings(value, hub.getTempRate());
+            return SettingValueDTO.builder()
+                            .value(hub.getTempSetting())
+                    .build();
+
         }else if(name.equals("humid")){
-            hub.changeHumidSettings(value, hub.getHumidRate());
+            return SettingValueDTO.builder()
+                    .value(hub.getHumidSetting())
+                    .build();
+        }
+        return null;
+    }
+
+    public SettingValueDTO getRangeValue(String name, Long hubId) {
+        Hub hub = getHub(hubId);
+        if(name.equals("temp")){
+            return SettingValueDTO.builder()
+                    .value(hub.getTempRate())
+                    .build();
+        }else if(name.equals("humid")){
+            return SettingValueDTO.builder()
+                    .value(hub.getHumidRate())
+                    .build();
+        }
+        return null;
+    }
+
+    public void setSensorTarget(String name, Long hubId, Double value) {
+        Hub hub = getHub(hubId);
+        if(name.equals("temp")){
+            hub.changeTempTarget(value);
+        }else if(name.equals("humid")){
+            hub.changeHumidTarget(value);
+        }
+        hubRepository.save(hub);
+    }
+
+    public void setSensorRange(String name, Long hubId, Double value) {
+        Hub hub = getHub(hubId);
+        if(name.equals("temp")){
+            hub.changeTempRange(value);
+        }else if(name.equals("humid")){
+            hub.changeHumidRange(value);
         }
         hubRepository.save(hub);
     }

@@ -6,12 +6,10 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 public class SettingValueDTO {
-    private Double maxValue;
-    private Double minValue;
+    private Double value;
 
     @Builder
-    public SettingValueDTO(Double maxValue, Double minValue){
-        this.maxValue = maxValue;
-        this.minValue = minValue;
+    public SettingValueDTO(Double value){
+        this.value = value;
     }
 }

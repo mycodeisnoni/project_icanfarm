@@ -25,8 +25,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HubRepository hubRepository;
     private final BCryptPasswordEncoder encoder;
-
-//    private final TokenProvider tokenManager;
+    private final DataSensingService dataSensingService;
 
     public Long login(MemberJoinDTO memberJoinDTO) {
 
@@ -39,8 +38,6 @@ public class MemberService {
 
         if(!encoder.matches(memberJoinDTO.getPasswd(), findMember.getPasswd()))
             throw new PasswdInvalidException();
-
-//        String token = tokenManager.createToken(findMember.getId());
 
         return findMember.getId();
     }
@@ -62,9 +59,14 @@ public class MemberService {
 
     public void setRPiPasswd(Long id, RPiPwDTO rpiPwDTO) {
         Member member = getMember(id);
+        String pw = rpiPwDTO.getPwd();
 
-        member.changeRPiPasswd(rpiPwDTO.getPwd());
+        member.changeRPiPasswd(pw);
         memberRepository.save(member);
+
+        for(Hub h : member.getHubs()){
+            dataSensingService.sendHubPasswod(pw, h.getId());
+        }
     }
 
     public List<HubInfoDTO> getHubList(Long id) {

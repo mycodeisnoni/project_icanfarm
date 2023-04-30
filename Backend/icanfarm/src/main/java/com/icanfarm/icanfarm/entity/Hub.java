@@ -142,16 +142,6 @@ public class Hub {
         this.isLight = true;
     }
 
-    public void changeTempSettings(Double maxValue, Double minValue) {
-        this.tempSetting = maxValue;
-        this.tempRate = minValue;
-    }
-
-    public void changeHumidSettings(Double maxValue, Double minValue) {
-        this.humidSetting = maxValue;
-        this.humidRate = minValue;
-    }
-
     public void changeLightSettings(LocalDateTime startTime, LocalDateTime endTime) {
         this.lightTurnOnTime = startTime;
         this.lightTurnOffTime = endTime;
@@ -165,5 +155,21 @@ public class Hub {
                 .humidRangeValue(this.humidRate)
                 .build()
                 .toJsonString();
+    }
+
+    public void changeTempTarget(Double value) {
+        this.tempSetting = value;
+    }
+
+    public void changeHumidTarget(Double value) {
+        this.humidSetting = value;
+    }
+
+    public void changeTempRange(Double value) {
+        this.tempRate = value;
+    }
+
+    public void changeHumidRange(Double value) {
+        this.humidRate = value;
     }
 }

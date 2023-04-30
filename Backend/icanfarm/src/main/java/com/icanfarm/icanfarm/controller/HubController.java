@@ -3,6 +3,7 @@ package com.icanfarm.icanfarm.controller;
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
+import com.icanfarm.icanfarm.service.DataSensingService;
 import com.icanfarm.icanfarm.service.HubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,34 +17,38 @@ import java.util.List;
 public class HubController {
 
     private final HubService hubService;
+    private final DataSensingService dataSensingService;
 
     @GetMapping("/{sensor}/{rpi_id}")
-    public ResponseEntity getTempInfo(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
-        List<InfoValueDTO> values = hubService.getTempInfo(sensor, id);
+    public ResponseEntity getDataInfo(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
+        List<InfoValueDTO> values = hubService.getDataInfo(sensor, id);
         return ResponseEntity.ok().body(values);
     }
 
-    @GetMapping("/setting/temp/{rpi_id}")
-    public ResponseEntity getTempSetting(@PathVariable("rpi_id") Long id){
-        SettingValueDTO settingValueDTO = hubService.getTempSettings(id);
-        return ResponseEntity.ok().body(settingValueDTO);
+    @GetMapping("/setting/target/{sensor}/{rpi_id}")
+    public ResponseEntity getSensorTarget(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
+        SettingValueDTO value = hubService.getTargetValue(sensor, id);
+        return ResponseEntity.ok().body(value);
     }
 
-    @PostMapping("/setting/temp/{rpi_id}")
-    public ResponseEntity setTempSetting(@PathVariable("rpi_id") Long id, @RequestBody SettingValueDTO settingValueDTO){
-        hubService.setTempSetting(id, settingValueDTO);
-        return ResponseEntity.ok().body("온도 설정을 변경했습니다.");
+    @GetMapping("/setting/range/{sensor}/{rpi_id}")
+    public ResponseEntity getSensorRange(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
+        SettingValueDTO value = hubService.getRangeValue(sensor, id);
+        return ResponseEntity.ok().body(value);
     }
 
-    @GetMapping("/setting/humid/{rpi_id}")
-    public ResponseEntity getHumidSetting(@PathVariable("rpi_id") Long id){
-        return ResponseEntity.ok().body(hubService.getHumidSetting(id));
+    @PostMapping("/setting/target/{sensor}/{rpi_id}")
+    public ResponseEntity setSensorTarget(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id, @RequestBody SettingValueDTO settingValueDTO){
+        hubService.setSensorTarget(sensor, id, settingValueDTO.getValue());
+        dataSensingService.changeSensorTarget(sensor, id, settingValueDTO.getValue());
+        return ResponseEntity.ok().body("설정을 변경했습니다.");
     }
 
-    @PostMapping("/setting/humid/{rpi_id}")
-    public ResponseEntity setHumidSetting(@PathVariable("rpi_id") Long id, @RequestBody SettingValueDTO settingValueDTO){
-        hubService.setHumidSetting(id, settingValueDTO);
-        return ResponseEntity.ok().body("습도 설정을 변경했습니다.");
+    @PostMapping("/setting/range/{sensor}/{rpi_id}")
+    public ResponseEntity setSensorRange(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id, @RequestBody SettingValueDTO settingValueDTO){
+        hubService.setSensorRange(sensor, id, settingValueDTO.getValue());
+        dataSensingService.changeSensorRange(sensor, id, settingValueDTO.getValue());
+        return ResponseEntity.ok().body("설정을 변경했습니다.");
     }
 
     @GetMapping("/setting/light/{rpi_id}")
