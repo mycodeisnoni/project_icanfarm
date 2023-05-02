@@ -18,7 +18,7 @@
           <router-link to="/monitor" style="text-decoration: none; color: black;">Monitor</router-link>
         </div>
         <div>
-          <router-link to="/" style="text-decoration: none; color: black;">LOGOUT</router-link>
+          <router-link to="/login" style="text-decoration: none; color: black;">LOGOUT</router-link>
         </div>
       </div>
       <router-view/>

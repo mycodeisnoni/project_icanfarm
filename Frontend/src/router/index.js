@@ -4,12 +4,13 @@ import LoginView from "../views/LoginView.vue"
 import MonitorView from "../views/MonitorView.vue"
 import RPiView from "../views/RPiView.vue"
 import AccountView from "../views/AccountView.vue"
+import HubView from "../views/HubView.vue"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     name: "Login",
     component: LoginView,
   },
@@ -17,6 +18,11 @@ const routes = [
     path: "/monitor",
     name: "Monitor",
     component: MonitorView,
+  },
+  {
+    path: "/monitor/:id",
+    name: "Monitor_hub",
+    component: HubView,
   },
   {
     path: "/rpi",
@@ -27,7 +33,7 @@ const routes = [
     path: "/account",
     name: "Account",
     component: AccountView,
-  }
+  },
 ]
 
 const router = new VueRouter({

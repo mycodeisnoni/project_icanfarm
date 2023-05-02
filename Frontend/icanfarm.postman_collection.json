@@ -1,0 +1,435 @@
+{
+	"info": {
+		"_postman_id": "f31659e4-fc54-4d6d-bac8-09ef904e1dd3",
+		"name": "icanfarm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "hub 저장",
+			"request": {
+				"method": "POST",
+				"header": [],				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serial\" : \"abcdefg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/rpi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"rpi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "회원 저장",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"1234!@1234\",\r\n    \"passwd\" : \"1234\",\r\n    \"name\" : \"aaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/member",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"member"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "이메일 중복 확인",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/validation/email/aaabbb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"validation",
+						"email",
+						"aaabbb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "시리얼 번호 중복 확인",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/validation/serial/1231243dfa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"validation",
+						"serial",
+						"1231243dfa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "회원 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/member/1234!@1234",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"member",
+						"1234!@1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "허브 등록",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"memberId\" : 1,\r\n    \"tempModule\" : \"true\",\r\n    \"lightModule\" : \"true\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/admin/member/rpi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"member",
+						"rpi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "허브 삭제",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admin/member/rpi/2/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admin",
+						"member",
+						"rpi",
+						"2",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "로그인",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"1234!@1234\",\r\n    \"passwd\" : \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "라즈베리파이 비밀번호 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/rpi/pw/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rpi",
+						"pw",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "라즈베리파이 비밀번호 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pwd\" : \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/rpi/pw/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"rpi",
+						"pw",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "허브 리스트 조회",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "기본 허브 조회",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "온도 설정 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/temp/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"temp",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "온도 설정 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/temp/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"temp",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "습도 설정 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/humid/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"humid",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "습도 설정 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/humid/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"humid",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "조명 설정 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/light/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"light",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "조명 설정 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/light/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"light",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "온도 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/temp/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"temp",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
