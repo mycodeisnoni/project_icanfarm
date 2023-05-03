@@ -30,8 +30,9 @@ public:
 };
 
 void publish(mqtt::async_client& client) {
+    std::string payload;
+
     while (true) {
-        std::string payload;
         std::getline(std::cin, payload);
 
         if (payload == "") continue;
