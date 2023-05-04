@@ -1,4 +1,4 @@
-.<template>
+<template>
   <div class="container">
     <div class="item1">
       <div class="nav1">
@@ -15,7 +15,7 @@
       </div>
       <div class="nav2">
         <div><router-link to="/rpi" style="text-decoration: none; color: black;">RPi PW</router-link></div>
-        <div><router-link to="/login" style="text-decoration: none; color: black;">LOGOUT</router-link></div>
+        <div><router-link to="/" style="text-decoration: none; color: black;">LOGOUT</router-link></div>
       </div>
       <router-view/>
     </div>

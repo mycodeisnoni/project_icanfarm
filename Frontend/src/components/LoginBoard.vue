@@ -1,4 +1,4 @@
-.<template>
+<template>
   <div class="container">
     <div class="item1">
       <div class="ICON"></div>
@@ -17,11 +17,11 @@
             <th><input type="password" placeholder="Password" v-model="userPassword"></th>
           </tr>
         </tbody>
-        <div class="d-grid gap-2 col-6">
+        <div class="d-grid gap-2 col-6" style="margin: 30px auto;">
           <button class="login_btn" type="button" @click="goToMonitor">로그인</button>
         </div>
-        <div>
-          <router-link to="/account" style="text-decoration: none; color: white; font-size: 36px;">ID 조회 | PW 조회 | RPi PW 조회</router-link>
+        <div style="display: flex; justify-content: center;">
+          <router-link to="/account" style="text-decoration: none; color: white; font-size: 28px;">ID 조회 | PW 조회 | RPi PW 조회</router-link>
         </div>
         <router-view/>
 
@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import { api } from "@/utils/axios";
+
 export default {
   name: 'LoginPage',
   data(){
@@ -40,10 +42,23 @@ export default {
     }
   },
   methods:{
-    goToMonitor() {
-      // console.log(`ID: ${this.userId}, Password: ${this.userPassword}`)
-      this.$router.push({name: 'Monitor'})
-    }
+    async goToMonitor() {
+      // try {
+      //   const response = await api.member.login({
+      //     email: this.userId,
+      //     password: this.userPassword,
+      //   });
+
+      //   console.log(response.data);
+
+      //   // 로그인 성공한 경우 monitor 페이지로 이동
+      //   this.$router.push({ name: 'Monitor' });
+      // } catch (error) {
+      //   console.error(error);
+      //   alert('로그인에 실패하였습니다.');
+      // }
+      this.$router.push({ name: 'Monitor' });
+    },
   }
 }
 </script>
@@ -62,7 +77,6 @@ export default {
   left: 0;
 }
 .ICON{
-  /* border: solid 1px black; */
   background-image: url("../assets/ICON_ICANFARM.png");
   background-size: cover;
   width: 135px;
@@ -71,7 +85,6 @@ export default {
   left: 2%;
 }
 .LOGO{
-  /* border: solid 1px black; */
   background-image: url("../assets/LOGO_ICANFARM.png");
   background-size: cover;
   width: 325px;
@@ -89,10 +102,10 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.login{
+/* .login{
   border: 1px white solid;
 
-}
+} */
 .label{
   color: white;
   font-size: 64px;
@@ -105,11 +118,8 @@ input{
 }
 .login_btn{
   background-color: rgb(90, 100, 100);
-  /* width: 400px;
-  height: 110px; */
   color: white;
   font-size: 48px;
-  text-align: center;
 }
 
 </style>

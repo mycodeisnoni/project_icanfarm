@@ -28,15 +28,15 @@
       <div class="PW_box">
         <!-- <div></div> -->
         <label for="" style="font-size: 48px; font-weight: bold;">RPi Password</label>
-        <input type="text" style="font-size: 64px; text-align: center;" v-model="newPassword" @input="onInput" maxlength="6" size="6" :placeholder="inputValue">
-        <button type="button" style="font-size: 24px; height: 50px; width: 100px;" :disabled="newPassword.length !== 6" @click="changeRPiPW">SAVE</button>
+        <input type="text" style="font-size: 64px; text-align: center;" v-model="inputValue" @input="onInput" maxlength="6" size="6" placeholder="000000">
+        <button type="button" style="font-size: 24px; height: 50px; width: 100px;" :disabled="inputValue.length !== 6" @click="openModal">SAVE</button>
       </div>
     </div>
                 
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>New RPi Password: {{ newPassword }}</p>
+        <p>Modal Content</p>
       </div>
     </div>
 
@@ -51,47 +51,39 @@ import { api } from "@/utils/axios"
 export default {
   data() {
     return{
+      inputValue: '000000',
       isModalOpen: false,
-      inputValue: '',
       newPassword: '',
     }
   },
-  mounted(){
-    this.fetchRPiPW();
-  },
+  // mounted() {
+  //   // Dropdown 초기화
+  //   var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+  //   var dropdownList = dropdownElementList.map(function (dropdownToggle) {
+  //     return new bootstrap.Dropdown(dropdownToggle)
+  //   })
+  // },
+  // async created(){
+  //   try{
+  //     const response = await api.member.getRPiPW
+  //   }
+  // },
   methods: {
-    async fetchRPiPW() {
-      try{
-        const response = await api.member.getRPiPW(member_id);
-        if(response && response.data){
-          this.inputValue = response.data.pwd || '000000';
-        } else{
-          this.inputValue = '000000';
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async changeRPiPW() {
-      try{
-        const response = await api.member.setRPiPW(member_id, this.newPassword);
-        if(response && response.data){
-          this.isModelOpen = true;
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    onInput(event){
-      event.target.value = event.target.value.replace(/\D/g, "");
-      this.newPassword = event.target.value;
-    },
+    // openModal() {
+    //   this.isModalOpen = true;
+    //   api.
+    // },
     closeModal() {
       this.isModalOpen = false;
     },
-  },
+    onInput(){
+      this.newPassword = this.inputValue.replace(/[^0-9]/g, '').substring(0, 6);
+    },
+  }
 }
 </script>
+
+
 
 <style scoped>
 .item1{
