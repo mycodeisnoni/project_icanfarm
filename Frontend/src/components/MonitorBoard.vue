@@ -60,18 +60,18 @@
                 </tr>
                 <tr>
                   <th>TEMP (°C)</th>
-                  <th><input type="text" size="3"></th>
-                  <th><input type="text" size="3"></th>
+                  <th><input type="text" :placeholder="tempTarget" v-model="tempTarget" size="3"></th>
+                  <th><input type="text" :placeholder="tempRange" v-model="tempRange" size="3"></th>
                 </tr>
                 <tr>
                   <th>WATER (%)</th>
-                  <th><input type="text" size="3"></th>
-                  <th><input type="text" size="3"></th>
+                  <th><input type="text" :placeholder="humidTarget" v-model="humidTarget" size="3"></th>
+                  <th><input type="text" :placeholder="humidRange" v-model="humidRange" size="3"></th>
                 </tr>
                 <tr>
                   <th>LIGHT (H)</th>
-                  <th><input type="text" size="3"></th>
-                  <th><input type="text" size="3"></th>
+                  <th><input type="text" :placeholder="lightTarget" v-model="lightTarget" size="3"></th>
+                  <th><input type="text" :placeholder="lightRange" v-model="lightRange" size="3"></th>
                 </tr>
               </tbody>
               <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 20px;" @click="openModal">SET</button>
@@ -109,7 +109,13 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>Modal Content</p>
+        <h2>Settings</h2>
+        <p>Temperature Target : {{ tempTarget }}</p>
+        <p>Temperature Range : {{ tempRange }}</p>
+        <p>Humid Target : {{ humidTarget }}</p>
+        <p>Humid Range : {{ humidRange }}</p>
+        <p>Light Target : {{ lightTarget }}</p>
+        <p>Light Range : {{ lightRange }}</p>
       </div>
     </div>
 
@@ -117,7 +123,8 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
+import Chart from 'chart.js/auto';
+import { api } from "@/utils/axios";
 
 export default {
   name: 'LineChart',
@@ -127,12 +134,30 @@ export default {
       temp_table: null,
       humid_table: null,
       co2_table: null,
+      tempTarget: "",
+      tempRange: "",
+      humidTarget: "",
+      humidRange: "",
+      lightTarget: "",
+      lightRange: "",
     };
   },
   mounted(){
     this.renderChart();
+    this.getSettings();
   },
   methods: {
+    async getSettings() {
+      const tempSetting = await api.hub.getTempSetting(rpi_id);
+      const humidSetting = await api.hub.getHumidSetting(rpi_id);
+      const lightSetting = await api.hub.getLightSetting(rpi_id);
+      this.tempTarget = tempSetting.data.target;
+      this.tempRange = tempSetting.data.range;
+      this.humidTarget = humidSetting.data.target;
+      this.humidRange = humidSetting.data.target;
+      this.lightTarget = lightSetting.data.target;
+      this.lightRange = lightSetting.data.target;
+    },
     openModal() {
       this.isModalOpen = true;
     },

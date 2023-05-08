@@ -1,57 +1,54 @@
 <template>
-  <div>
-    <div>
-        이메일: 
-        <input type="text" name="" id="" v-model="email">
-        <button @click="doubleCheck">중복확인</button>
-    </div>
-    <div>
-        PW: 
-        <input type="password" v-model="passwd">
-    </div>
-    <div>
-        이름:
-        <input type="text" v-model="user_name">
-    </div>
-    <button @click="saveMember">저장</button>
+  <div class="chart-container">
+    <donut-chart :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
 <script>
-import { api } from "@/utils/axios";
+import DonutChart from './chart_Doughnut.vue';
 
 export default {
-    data(){
-        return {
-            email: "",
-            passwd: "",
-            user_name: "",
-        }
-    },
-    methods: {
-        doubleCheck(){
-            console.log("click");
-            api.admin.checkEmail(this.email)
-            .then((response) => {
-                alert(response.data.message);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
-        saveMember(){
-            api.admin.setMember({email: this.email, passwd: this.passwd, name: this.user_name})
-            .then((response) => {
-                alert(response.data.message);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        },
-    },
-}
+  name: 'App',
+  components: {
+    DonutChart,
+  },
+  data() {
+    return {
+      chartData: {
+        labels: ['Red', 'Blue'],
+        datasets: [
+          {
+            label: 'My First Dataset',
+            data: [300, 350-300],
+            backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
+            hoverOffset: 4,
+          },
+        ],
+      },
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      if (this.$refs.chart) {
+        this.renderChart();
+        const canvas = this.$refs.donutChart.$refs.chart;
+        canvas.height = canvas.offsetWidth;
+        canvas.width = canvas.offsetHeight;
+      }
+    });
+  },
+};
 </script>
 
 <style>
-
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
 </style>

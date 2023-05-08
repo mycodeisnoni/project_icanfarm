@@ -10,7 +10,7 @@
         <tbody>
           <tr>
             <th><label class="label" for="id">ID</label></th>
-            <th><input type="text" placeholder="User email" v-model="userId"></th>
+            <th><input type="text" placeholder="User email" v-model="userEmail"></th>
           </tr>
           <tr>
             <th><label class="label" for="password">PW</label></th>
@@ -37,27 +37,27 @@ export default {
   name: 'LoginPage',
   data(){
     return{
-      userId: '',
-      userPassword: '',
+      userEmail: "",
+      userPassword: "",
     }
   },
   methods:{
     async goToMonitor() {
-      // try {
-      //   const response = await api.member.login({
-      //     email: this.userId,
-      //     password: this.userPassword,
-      //   });
+      try {
+        const response = await api.member.login({
+          email: this.userEmail,
+          password: this.userPassword,
+        });
 
-      //   console.log(response.data);
+        console.log(response.data);
 
-      //   // 로그인 성공한 경우 monitor 페이지로 이동
-      //   this.$router.push({ name: 'Monitor' });
-      // } catch (error) {
-      //   console.error(error);
-      //   alert('로그인에 실패하였습니다.');
-      // }
-      this.$router.push({ name: 'Monitor' });
+        // 로그인 성공한 경우 monitor 페이지로 이동
+        this.$router.push({ name: 'Monitor' });
+      } catch (error) {
+        console.error(error);
+        alert('로그인에 실패하였습니다.');
+      }
+      // this.$router.push({ name: 'Monitor' });
     },
   }
 }

@@ -76,7 +76,9 @@ export default {
       try{
         const response = await api.member.setRPiPW(member_id, this.newPassword);
         if(response && response.data){
-          this.isModelOpen = true;
+          //console.log(this.isModalOpen);
+          this.isModalOpen = true;
+          //console.log(this.isModalOpen);
         }
       } catch (error) {
         console.error(error);
