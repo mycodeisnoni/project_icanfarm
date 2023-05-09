@@ -51,4 +51,3 @@ void MainWindow::subscribe_btn()
     msgBox.setText(s);
     msgBox.exec();
 }
-
