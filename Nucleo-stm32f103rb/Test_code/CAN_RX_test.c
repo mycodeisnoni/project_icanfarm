@@ -46,7 +46,9 @@ CAN_HandleTypeDef hcan;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+CAN_FilterTypeDef  sFilterConfig;   // ?��?�� ?��?�� 구조�? �??��
+CAN_RxHeaderTypeDef   RxHeader;
+uint8_t               RxData[8];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,7 +62,35 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// printf �? ?��?��?���? ?��?�� ?��?��
+int _write(int file, char *ptr, int len)
+{
+    HAL_UART_Transmit(&huart2, (uint8_t *)ptr, (uint16_t)len, 100);
 
+    return (len);
+}
+
+// CAN ?��?�� ?��?��?��?�� 콜백
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *CanHandle)
+{
+    printf("%s\r\n", __FUNCTION__);
+  /* Get RX message */
+  if (HAL_CAN_GetRxMessage(CanHandle, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
+  {
+    /* Reception Error */
+    Error_Handler();
+  }
+
+  printf("StdID: %04lx, IDE: %ld, DLC: %ld\r\n", RxHeader.StdId, RxHeader.IDE, RxHeader.DLC);
+  printf("Data: %d %d %d %d %d %d %d %d\r\n", RxData[0], RxData[1], RxData[2], RxData[3], RxData[4], RxData[5], RxData[6], RxData[7]);
+
+}
+
+// CAN Error 콜백
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
+{
+    printf("%s\r\n", __FUNCTION__);
+}
 /* USER CODE END 0 */
 
 /**
@@ -94,7 +124,41 @@ int main(void)
   MX_CAN_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  printf("Start\r\n");
 
+  /* CAN Filter ?��?�� */
+  sFilterConfig.FilterBank = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;              // 0x00000000 = 모든 ID�? 받아?��?��겠다
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.SlaveStartFilterBank = 14;
+
+  if (HAL_CAN_ConfigFilter(&hcan, &sFilterConfig) != HAL_OK)
+  {
+    /* Filter configuration Error */
+    Error_Handler();
+  }
+
+  /* Can Start */
+  if (HAL_CAN_Start(&hcan) != HAL_OK)
+  {
+    /* Start Error */
+    Error_Handler();
+  }
+
+  /* Activate CAN RX notification */
+  if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  {
+    /* Notification Error */
+    Error_Handler();
+  }
+
+  printf("Can Ready!!\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -132,6 +196,23 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /* CAN TX Pin Configuration */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  //GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* CAN RX Pin Configuration */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  //GPIO_InitStruct.AlternateFuncMode = GPIO_AF9_CAN1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -140,7 +221,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
@@ -225,6 +305,7 @@ static void MX_USART2_UART_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 /* USER CODE BEGIN MX_GPIO_Init_1 */
 /* USER CODE END MX_GPIO_Init_1 */
 
@@ -233,6 +314,12 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pins : PC8_CANL_Pin PC9_CANH_Pin */
+  GPIO_InitStruct.Pin = PC8_CANL_Pin|PC9_CANH_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

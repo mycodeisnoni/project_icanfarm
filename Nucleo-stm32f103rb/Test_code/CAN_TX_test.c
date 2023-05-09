@@ -113,7 +113,7 @@ int main(void)
 
   /* Configure Transmission process */
   TxHeader.StdId = 0x321;                 // Standard Identifier, 0 ~ 0x7FF / 이산화탄소 센싱값 ID
-  TxHeader.ExtId = 0x01;                  // Extended Identifier, 0 ~ 0x1FFFFFFF
+  //TxHeader.ExtId = 0x01;                  // Extended Identifier, 0 ~ 0x1FFFFFFF
   TxHeader.RTR = CAN_RTR_DATA;            // 전송하는 메세지의 프레임 타입, DATA or REMOTE
   TxHeader.IDE = CAN_ID_STD;              // 전송하는 메세지의 식별자 타입, STD or EXT
   TxHeader.DLC = 8;                       // 송신 프레임 길이, 0 ~ 8 byte
@@ -137,6 +137,7 @@ int main(void)
       Error_Handler();
   }
   printf("Can Send Success\r\n");
+  printf("\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -174,6 +175,26 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /* CAN TX Pin Configuration */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  //GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* CAN RX Pin Configuration */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  //GPIO_InitStruct.AlternateFuncMode = GPIO_AF9_CAN1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+
+
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
 
@@ -185,7 +206,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;  // PLLCLK = 8MHz * 9 = 72MHz
+  //RCC_ClkInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;  // PLLCLK = 8MHz * 9 = 72MHz
 
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
