@@ -1,5 +1,18 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <string>
+
+int sock;
+struct sockaddr_can addr;
+struct can_frame frame;
+struct ifreq ifr;
+
+std::string topic = "test/1";
+const int QOS = 1;
+
+const std::string CLIENT_ID("1");
+const std::string PUB_TOPIC("test/" + CLIENT_ID);
+const std::string SUB_TOPIC("test/" + CLIENT_ID);
 
 class callback : public virtual mqtt::callback {
 public:
@@ -17,11 +30,11 @@ mqtt::async_client client("tcp://k8a206.p.ssafy.io:3333", "1");
 callback cb;
 mqtt::connect_options connOpts;
 
-
-MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , client("tcp://k8a206.p.ssafy.io:3333", "1")
+// MainWindow 생성자
+MainWindow::MainWindow(QWidget* parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    client("tcp://k8a206.p.ssafy.io:3333", "1")
 {
     ui->setupUi(this);
 
@@ -40,29 +53,57 @@ MainWindow::MainWindow(QWidget* parent)
     catch (const mqtt::exception& exc) {
         std::cerr << "Error: " << exc.what() << std::endl;
     }
-    
-    Thread* sub = new Thread(this, &client, "test/1");
-    sub->start();
-    Thread* pub = new Thread(this, &client, "test/1");
-    pub->run_pub();
 
+    // CAN 소켓 생성
+    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
+        perror("Error while creating socket");
+    }
+
+    strcpy(ifr.ifr_name, "vcan0"); // CAN 인터페이스 이름 설정
+    ioctl(sock, SIOCGIFINDEX, &ifr); // 소켓-네트워크 인터페이스 연결
+
+    // 소켓 주소 구조체 초기화
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = ifr.ifr_ifindex;
+
+    // 소켓에 주소 바인딩
+    if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+        perror("Error in socket bind");
+    }
+
+    Thread* mqtt_pub_t = new Thread(this, &client, NULL, topic, 0, 0);
+    Thread* mqtt_sub_t = new Thread(this, &client, NULL, topic, 0, 1);
+    Thread* cansend_t = new Thread(this, NULL, &frame, topic, sock, 2);
+    Thread* candump_t = new Thread(this, NULL, &frame, topic, sock, 3);
+
+    mqtt_pub_t->start();
+    mqtt_sub_t->start();
+    cansend_t->start();
+    candump_t->start();
 }
 
+// MainWindow 소멸자
 MainWindow::~MainWindow()
 {
-     mqtt::token_ptr unsubtok = client.unsubscribe("test/1");
+    mqtt::token_ptr unsubtok = client.unsubscribe("test/1");
     unsubtok->wait();
 
     // Disconnect from the MQTT server
     mqtt::token_ptr disctok = client.disconnect();
     disctok->wait();
+
+    // Delete dynamically allocated threads
+    delete mqtt_pub_t;
+    delete mqtt_sub_t;
+    delete cansend_t;
+    delete candump_t;
+
     delete ui;
 }
 
 void MainWindow::onMessageArrived(QString message) {
     std::cout << "Message arrived: " << message.toStdString() << std::endl;
 }
-
 
 void MainWindow::subscribe_btn()
 {
@@ -80,9 +121,7 @@ void MainWindow::subscribe_btn()
         std::cerr << "Error: " << exc.what() << std::endl;
     }
 
-
     QMessageBox msgBox;
     msgBox.setText(s);
     msgBox.exec();
 }
-
