@@ -3,7 +3,9 @@ import VueRouter from 'vue-router'
 import LoginView from "../views/LoginView.vue"
 import MonitorView from "../views/MonitorView.vue"
 import RPiView from "../views/RPiView.vue"
-import AccountView from "../views/AccountView.vue"
+import AdminMemView from "../views/AdminMemView.vue"
+import AdminHubView from "../views/AdminHubView.vue"
+import AdminManView from "../views/AdminManView.vue"
 import HubView from "../views/HubView.vue"
 import RegisterView from "../views/RegisterView.vue"
 
@@ -31,9 +33,19 @@ const routes = [
     component: RPiView,
   },
   {
-    path: "/account",
-    name: "Account",
-    component: AccountView,
+    path: "/admin/member",
+    name: "AdminMember",
+    component: AdminMemView,
+  },
+  {
+    path: "/admin/hub",
+    name: "AdminHub",
+    component: AdminHubView,
+  },
+  {
+    path: "/admin/manage",
+    name: "AdminManage",
+    component: AdminManView,
   },
   {
     path: "/register",

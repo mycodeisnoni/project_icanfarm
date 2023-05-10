@@ -3,7 +3,7 @@
     <div class="item1">
       <div class="nav1">
         <div class="ICON"></div>
-        <div style="font-size: 24px;">User Name</div>
+        <div style="font-size: 24px;">{{ userName }}</div>
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">허브명</button>
           <ul class="dropdown-menu">
@@ -15,9 +15,9 @@
       </div>
       <div class="nav2">
         <div><router-link to="/rpi" style="text-decoration: none; color: black;">RPi PW</router-link></div>
-        <div><router-link to="/" style="text-decoration: none; color: black;">LOGOUT</router-link></div>
+        <router-view/>
+        <div><a href="/" style="text-decoration: none; color: black;" @click="logout">LOGOUT</a></div>
       </div>
-      <router-view/>
     </div>
 
     <div class="uptime">
@@ -130,6 +130,7 @@ export default {
   name: 'LineChart',
   data() {
     return {
+      userName: "",
       isModalOpen: false,
       temp_table: null,
       humid_table: null,
@@ -143,10 +144,16 @@ export default {
     };
   },
   mounted(){
+    api.
     this.renderChart();
     this.getSettings();
   },
   methods: {
+    logout(){
+      console.log("삭제해ㅐㅐㅐㅐㅐㅐㅐ")
+      localStorage.removeItem('user');
+    },
+
     async getSettings() {
       const tempSetting = await api.hub.getTempSetting(rpi_id);
       const humidSetting = await api.hub.getHumidSetting(rpi_id);

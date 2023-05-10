@@ -1,20 +1,23 @@
 import axios from "axios";
 
 const request = axios.create({
-    baseURL : "http://localhost:8080"
-});
+    baseURL: "http://k8a206.p.ssafy.io:8090",
+  })
 
 export const api = {
     member: {
         // 회원 로그인
-        login: ({email, password}) => {
-            return request.post('/api/login', {email, password});
+        // check -> LoginBoard
+        login: ({email, passwd}) => {
+            return request.post('/api/login', {email, passwd});
         },
         // RPi 비밀번호 조회
+        // check -> AccountBoard, RPiBoard
         getRPiPW: (member_id) => {
             return request.get(`/api/rpi/pw/${member_id}`);
         },
         // RPi 비밀번호 저장
+        // check -> RPiBoard
         setRPiPW: (member_id, rpi_pw) => {
             return request.post(`/api/rpi/pw/${member_id}`, {pwd: rpi_pw});
         },
@@ -99,3 +102,5 @@ export const api = {
         }
     }
 }
+
+export default request

@@ -58,20 +58,21 @@ export default {
   },
   mounted(){
     this.fetchRPiPW();
+
   },
   methods: {
-    async fetchRPiPW() {
-      try{
-        const response = await api.member.getRPiPW(member_id);
-        if(response && response.data){
-          this.inputValue = response.data.pwd || '000000';
-        } else{
-          this.inputValue = '000000';
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    // async fetchRPiPW() {
+    //   try{
+    //     const response = await api.member.getRPiPW(member_id);
+    //     if(response && response.data){
+    //       this.inputValue = response.data.pwd || '000000';
+    //     } else{
+    //       this.inputValue = '000000';
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
     async changeRPiPW() {
       try{
         const response = await api.member.setRPiPW(member_id, this.newPassword);
@@ -83,6 +84,12 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    },
+    fetchRPiPW(){
+      api.member.getRPiPW(member_id)
+      .then((res) => {
+        console.log(res.data);
+      })
     },
     onInput(event){
       event.target.value = event.target.value.replace(/\D/g, "");

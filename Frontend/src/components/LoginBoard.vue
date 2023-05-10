@@ -21,12 +21,13 @@
           <button class="login_btn" type="button" @click="goToMonitor">로그인</button>
         </div>
         <div style="display: flex; justify-content: center;">
-          <router-link to="/account" style="text-decoration: none; color: white; font-size: 28px;">ID 조회 | PW 조회 | RPi PW 조회</router-link>
         </div>
-        <router-view/>
-
       </div>
     </div>
+    <dir style="position: absolute; right: 3%; bottom: 2%;">
+      <router-link to="/admin/member" style="text-decoration: none; color: white; font-size: 28px;">회원/허브 등록</router-link>
+      <router-view/>
+    </dir>
   </div>
 </template>
 
@@ -42,22 +43,25 @@ export default {
     }
   },
   methods:{
-    async goToMonitor() {
-      try {
-        const response = await api.member.login({
-          email: this.userEmail,
-          password: this.userPassword,
-        });
-
-        console.log(response.data);
-
-        // 로그인 성공한 경우 monitor 페이지로 이동
-        this.$router.push({ name: 'Monitor' });
-      } catch (error) {
+    goToMonitor() {
+      api.member.login({
+        email: this.userEmail,
+        passwd: this.userPassword,
+      })
+      .then((res) => {
+        console.log(res.data);
+        localStorage.setItem('user', JSON.stringify(res.data));
+        this.$router.push({name : 'Monitor'});
+      })
+      .catch((error) => {
         console.error(error);
-        alert('로그인에 실패하였습니다.');
-      }
-      // this.$router.push({ name: 'Monitor' });
+        if (error.response && error.response.status === 400) {
+        alert("로그인에 실패했습니다.");
+        } else {
+        alert("잘못된 접근입니다.");
+        };
+      });
+
     },
   }
 }

@@ -1,15 +1,17 @@
 {
 	"info": {
-		"_postman_id": "f31659e4-fc54-4d6d-bac8-09ef904e1dd3",
+		"_postman_id": "0acb64b7-8209-4083-92f2-66e5724609e8",
 		"name": "icanfarm",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19511451"
 	},
 	"item": [
 		{
 			"name": "hub 저장",
 			"request": {
 				"method": "POST",
-				"header": [],				"body": {
+				"header": [],
+				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"serial\" : \"abcdefg\"\r\n}",
 					"options": {
@@ -25,6 +27,38 @@
 						"localhost"
 					],
 					"port": "8080",
+					"path": [
+						"admin",
+						"rpi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hub 저장 Server",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serial\" : \"abcdefg2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://k8a206.p.ssafy.io:8090/admin/rpi",
+					"protocol": "http",
+					"host": [
+						"k8a206",
+						"p",
+						"ssafy",
+						"io"
+					],
+					"port": "8090",
 					"path": [
 						"admin",
 						"rpi"
@@ -134,7 +168,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"memberId\" : 1,\r\n    \"tempModule\" : \"true\",\r\n    \"lightModule\" : \"true\"\r\n}",
+					"raw": "{\r\n    \"memberId\" : 4,\r\n    \"tempModule\" : \"true\",\r\n    \"lightModule\" : \"true\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -215,7 +249,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/rpi/pw/2",
+					"raw": "http://localhost:8080/api/rpi/pw/4",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -225,7 +259,7 @@
 						"api",
 						"rpi",
 						"pw",
-						"2"
+						"4"
 					]
 				}
 			},
@@ -246,7 +280,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/rpi/pw/2",
+					"raw": "http://localhost:8080/api/rpi/pw/4",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -256,7 +290,7 @@
 						"api",
 						"rpi",
 						"pw",
-						"2"
+						"4"
 					]
 				}
 			},
@@ -266,7 +300,20 @@
 			"name": "허브 리스트 조회",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/hub/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"hub",
+						"4"
+					]
+				}
 			},
 			"response": []
 		},
@@ -274,7 +321,21 @@
 			"name": "기본 허브 조회",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/hub/default/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"hub",
+						"default",
+						"4"
+					]
+				}
 			},
 			"response": []
 		},
@@ -284,7 +345,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/setting/temp/1",
+					"raw": "http://localhost:8080/api/setting/target/temp/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -293,6 +354,30 @@
 					"path": [
 						"api",
 						"setting",
+						"target",
+						"temp",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "온도 범위 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/range/temp/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"range",
 						"temp",
 						"1"
 					]
@@ -305,8 +390,17 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\" : 3.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/api/setting/temp/1",
+					"raw": "http://localhost:8080/api/setting/target/temp/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -315,6 +409,39 @@
 					"path": [
 						"api",
 						"setting",
+						"target",
+						"temp",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "온도 범위 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\" : 2.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/setting/range/temp/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"range",
 						"temp",
 						"1"
 					]
@@ -328,7 +455,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/setting/humid/1",
+					"raw": "http://localhost:8080/api/setting/target/humid/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -337,6 +464,30 @@
 					"path": [
 						"api",
 						"setting",
+						"target",
+						"humid",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "습도 범위 정보 조회",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/setting/range/humid/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"range",
 						"humid",
 						"1"
 					]
@@ -349,8 +500,17 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\" : 1.5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/api/setting/humid/1",
+					"raw": "http://localhost:8080/api/setting/target/humid/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -359,6 +519,39 @@
 					"path": [
 						"api",
 						"setting",
+						"target",
+						"humid",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "습도 범위 변경",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\" : 2.5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/setting/range/humid/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"setting",
+						"range",
 						"humid",
 						"1"
 					]
@@ -393,6 +586,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"startTime\": \"2000-01-01T08:00:00\",\r\n    \"endTime\": \"2000-01-01T20:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:8080/api/setting/light/1",
 					"protocol": "http",
