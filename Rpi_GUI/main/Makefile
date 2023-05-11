@@ -58,6 +58,7 @@ SOURCES       = login_dialog.cpp \
 		qrc_arrow_up_logo.cpp \
 		qrc_c_logo.cpp \
 		qrc_can_logo.cpp \
+		qrc_can_logo2.cpp \
 		qrc_cloud_logo.cpp \
 		qrc_co2_logo.cpp \
 		qrc_h_logo.cpp \
@@ -82,6 +83,7 @@ OBJECTS       = login_dialog.o \
 		qrc_arrow_up_logo.o \
 		qrc_c_logo.o \
 		qrc_can_logo.o \
+		qrc_can_logo2.o \
 		qrc_cloud_logo.o \
 		qrc_co2_logo.o \
 		qrc_h_logo.o \
@@ -170,7 +172,6 @@ DIST          = /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -276,7 +277,6 @@ Makefile: main.pro /usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -301,6 +301,7 @@ Makefile: main.pro /usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 		Resources/arrow_up_logo.qrc \
 		Resources/c_logo.qrc \
 		Resources/can_logo.qrc \
+		Resources/can_logo2.qrc \
 		Resources/cloud_logo.qrc \
 		Resources/co2_logo.qrc \
 		Resources/h_logo.qrc \
@@ -388,7 +389,6 @@ Makefile: main.pro /usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -413,6 +413,7 @@ Resources/arrow_down_logo.qrc:
 Resources/arrow_up_logo.qrc:
 Resources/c_logo.qrc:
 Resources/can_logo.qrc:
+Resources/can_logo2.qrc:
 Resources/cloud_logo.qrc:
 Resources/co2_logo.qrc:
 Resources/h_logo.qrc:
@@ -442,7 +443,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents Resources/arrow_down_logo.qrc Resources/arrow_up_logo.qrc Resources/c_logo.qrc Resources/can_logo.qrc Resources/cloud_logo.qrc Resources/co2_logo.qrc Resources/h_logo.qrc Resources/icanfarm.qrc Resources/logout_logo.qrc Resources/percent_logo.qrc Resources/pot_logo.qrc Resources/ppm_logo.qrc Resources/recent_logo.qrc Resources/setting_logo.qrc Resources/sun_logo.qrc Resources/temperature_logo.qrc Resources/uptime_logo.qrc Resources/water_logo.qrc Resources/wind_logo.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents Resources/arrow_down_logo.qrc Resources/arrow_up_logo.qrc Resources/c_logo.qrc Resources/can_logo.qrc Resources/can_logo2.qrc Resources/cloud_logo.qrc Resources/co2_logo.qrc Resources/h_logo.qrc Resources/icanfarm.qrc Resources/logout_logo.qrc Resources/percent_logo.qrc Resources/pot_logo.qrc Resources/ppm_logo.qrc Resources/recent_logo.qrc Resources/setting_logo.qrc Resources/sun_logo.qrc Resources/temperature_logo.qrc Resources/uptime_logo.qrc Resources/water_logo.qrc Resources/wind_logo.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/aarch64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents login_dialog.h mainwindow.h $(DISTDIR)/
 	$(COPY_FILE) --parents login_dialog.cpp main.cpp mainwindow.cpp $(DISTDIR)/
@@ -471,9 +472,9 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all: qrc_arrow_down_logo.cpp qrc_arrow_up_logo.cpp qrc_c_logo.cpp qrc_can_logo.cpp qrc_cloud_logo.cpp qrc_co2_logo.cpp qrc_h_logo.cpp qrc_icanfarm.cpp qrc_logout_logo.cpp qrc_percent_logo.cpp qrc_pot_logo.cpp qrc_ppm_logo.cpp qrc_recent_logo.cpp qrc_setting_logo.cpp qrc_sun_logo.cpp qrc_temperature_logo.cpp qrc_uptime_logo.cpp qrc_water_logo.cpp qrc_wind_logo.cpp
+compiler_rcc_make_all: qrc_arrow_down_logo.cpp qrc_arrow_up_logo.cpp qrc_c_logo.cpp qrc_can_logo.cpp qrc_can_logo2.cpp qrc_cloud_logo.cpp qrc_co2_logo.cpp qrc_h_logo.cpp qrc_icanfarm.cpp qrc_logout_logo.cpp qrc_percent_logo.cpp qrc_pot_logo.cpp qrc_ppm_logo.cpp qrc_recent_logo.cpp qrc_setting_logo.cpp qrc_sun_logo.cpp qrc_temperature_logo.cpp qrc_uptime_logo.cpp qrc_water_logo.cpp qrc_wind_logo.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_arrow_down_logo.cpp qrc_arrow_up_logo.cpp qrc_c_logo.cpp qrc_can_logo.cpp qrc_cloud_logo.cpp qrc_co2_logo.cpp qrc_h_logo.cpp qrc_icanfarm.cpp qrc_logout_logo.cpp qrc_percent_logo.cpp qrc_pot_logo.cpp qrc_ppm_logo.cpp qrc_recent_logo.cpp qrc_setting_logo.cpp qrc_sun_logo.cpp qrc_temperature_logo.cpp qrc_uptime_logo.cpp qrc_water_logo.cpp qrc_wind_logo.cpp
+	-$(DEL_FILE) qrc_arrow_down_logo.cpp qrc_arrow_up_logo.cpp qrc_c_logo.cpp qrc_can_logo.cpp qrc_can_logo2.cpp qrc_cloud_logo.cpp qrc_co2_logo.cpp qrc_h_logo.cpp qrc_icanfarm.cpp qrc_logout_logo.cpp qrc_percent_logo.cpp qrc_pot_logo.cpp qrc_ppm_logo.cpp qrc_recent_logo.cpp qrc_setting_logo.cpp qrc_sun_logo.cpp qrc_temperature_logo.cpp qrc_uptime_logo.cpp qrc_water_logo.cpp qrc_wind_logo.cpp
 qrc_arrow_down_logo.cpp: Resources/arrow_down_logo.qrc \
 		/usr/lib/qt5/bin/rcc \
 		images/arrow_down.png
@@ -493,6 +494,10 @@ qrc_can_logo.cpp: Resources/can_logo.qrc \
 		/usr/lib/qt5/bin/rcc \
 		images/can\ logo.png
 	/usr/lib/qt5/bin/rcc -name can_logo Resources/can_logo.qrc -o qrc_can_logo.cpp
+
+qrc_can_logo2.cpp: Resources/can_logo2.qrc \
+		/usr/lib/qt5/bin/rcc
+	/usr/lib/qt5/bin/rcc -name can_logo2 Resources/can_logo2.qrc -o qrc_can_logo2.cpp
 
 qrc_cloud_logo.cpp: Resources/cloud_logo.qrc \
 		/usr/lib/qt5/bin/rcc \
@@ -638,6 +643,9 @@ qrc_c_logo.o: qrc_c_logo.cpp
 
 qrc_can_logo.o: qrc_can_logo.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_can_logo.o qrc_can_logo.cpp
+
+qrc_can_logo2.o: qrc_can_logo2.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_can_logo2.o qrc_can_logo2.cpp
 
 qrc_cloud_logo.o: qrc_cloud_logo.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_cloud_logo.o qrc_cloud_logo.cpp

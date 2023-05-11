@@ -21,8 +21,6 @@ int main(int argc, char *argv[])
         }
     }
     MainWindow w;
-    
-    w.resize(1280, 720);
 
     w.showFullScreen(); // 실제로는 전체화면으로 나타나야 함
     //w.show();

@@ -98,7 +98,6 @@ void MainWindow::changeValue() // 변경 버튼 눌렀을 때
     connect(login_D, SIGNAL(sendSensorValue(int)), this, SLOT(receiveSensorValue(int)));
 
     login_D->setModal(true); // modal로 열어야 로그인 창 열려있을 때 메인 창 건드리지 못 함
-    //login_D->showFullScreen();
     login_D->exec();
 }
 

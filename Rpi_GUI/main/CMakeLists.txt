@@ -26,6 +26,7 @@ set(PROJECT_SOURCES
         Resources/setting_logo.qrc
         Resources/logout_logo.qrc
         Resources/can_logo.qrc
+        Resources/can_logo2.qrc
         Resources/icanfarm.qrc
         Resources/pot_logo.qrc
         Resources/temperature_logo.qrc
