@@ -39,6 +39,7 @@ private slots:
     void changeSunColor();
     void changeCloudColor();
     void changeValue();
+    void receiveSensorValue(int flag); // 로그인 결과에 따라 login_diglog로부터 값 수신
 };
 
 #endif // MAINWINDOW_H

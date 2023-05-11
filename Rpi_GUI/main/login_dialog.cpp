@@ -1,11 +1,13 @@
 #include "login_dialog.h"
 #include "ui_login_dialog.h"
+#include "QDebug"
 
 login_dialog::login_dialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::login_dialog)
 {
     ui->setupUi(this);
+
 }
 
 login_dialog::~login_dialog()
@@ -18,6 +20,11 @@ void login_dialog::btn0_clicked()
     ui->PW->setPlainText(ui->PW->toPlainText() + '0');
 }
 
+void login_dialog::closeEvent(QCloseEvent *e) // 창 닫기 버튼 누를 경우
+{
+    emit sendSensorValue(-1); // 로그인 실패하고 창 닫으면 -1 전송
+    qDebug() << "login dialog close delete\n";
+}
 
 void login_dialog::btn1_clicked()
 {
@@ -77,6 +84,8 @@ void login_dialog::btnEnter_clicked()
         QMessageBox msgBox;
         msgBox.setText("로그인 성공!");
         msgBox.exec();
+        emit sendSensorValue(1); // 성공하면 1 전송
+        qDebug() << "login dialog close ok\n";
         QWidget::close();
     }
     else

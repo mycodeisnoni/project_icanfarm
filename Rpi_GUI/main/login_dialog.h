@@ -19,8 +19,11 @@ public:
 private:
     Ui::login_dialog *ui;
 
+signals:
+    void sendSensorValue(int flag); // 로그인 성공 혹은 실패에 따라 다른 값 전송
 
 private slots:
+    void closeEvent(QCloseEvent *e);
     void btn0_clicked();
     void btn1_clicked();
     void btn2_clicked();
@@ -33,8 +36,8 @@ private slots:
     void btn9_clicked();
     void btnDelete_clicked();
     void btnEnter_clicked();
-};
 
+};
 
 
 #endif // LOGIN_DIALOG_H
