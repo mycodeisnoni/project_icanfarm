@@ -14,7 +14,7 @@
           </tr>
           <tr>
             <th><label class="label" for="password">PW</label></th>
-            <th><input type="password" placeholder="Password" v-model="userPassword"></th>
+            <th><input type="password" placeholder="Password" v-model="userPassword" @keyup.enter="goToMonitor"></th>
           </tr>
         </tbody>
         <div class="d-grid gap-2 col-6" style="margin: 30px auto;">
@@ -24,9 +24,8 @@
         </div>
       </div>
     </div>
-    <dir style="position: absolute; right: 3%; bottom: 2%;">
-      <router-link to="/admin/member" style="text-decoration: none; color: white; font-size: 28px;">회원/허브 등록</router-link>
-      <router-view/>
+    <dir style="position: absolute; right: 3%; bottom: 2%;" @click="logout">
+      <div><a href="/admin/member" style="text-decoration: none; color: white; font-size: 28px;" @click="logout">회원/허브 등록</a></div>
     </dir>
   </div>
 </template>
@@ -43,6 +42,9 @@ export default {
     }
   },
   methods:{
+    handleButtonClick(){
+      console.log("버튼 눌림")
+    },
     goToMonitor() {
       api.member.login({
         email: this.userEmail,
@@ -61,7 +63,9 @@ export default {
         alert("잘못된 접근입니다.");
         };
       });
-
+    },
+    logout(){
+      localStorage.removeItem('user');
     },
   }
 }

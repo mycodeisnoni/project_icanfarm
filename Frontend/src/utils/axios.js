@@ -19,14 +19,14 @@ export const api = {
         // RPi 비밀번호 저장
         // check -> RPiBoard
         setRPiPW: (member_id, rpi_pw) => {
-            return request.post(`/api/rpi/pw/${member_id}`, {pwd: rpi_pw});
+            return request.post(`/api/rpi/pw/${member_id}`, {rpi_pw});
         },
         // 허브 리스트
-        getHubs: () => {
+        getHubs: (member_id) => {
             return request.get(`/api/hub/${member_id}`);
         },
         // 디폴트 허브 조회
-        getDefaultHub: () => {
+        getDefaultHub: (member_id) => {
             return request.get(`/api/hub/default/${member_id}`);
         },
         

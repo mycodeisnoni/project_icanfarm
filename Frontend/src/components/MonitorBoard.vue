@@ -144,13 +144,12 @@ export default {
     };
   },
   mounted(){
-    api.
+    // api.
     this.renderChart();
     this.getSettings();
   },
   methods: {
     logout(){
-      console.log("삭제해ㅐㅐㅐㅐㅐㅐㅐ")
       localStorage.removeItem('user');
     },
 

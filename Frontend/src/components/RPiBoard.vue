@@ -4,21 +4,14 @@
       <div class="nav1">
         <div class="ICON"></div>
         <div style="font-size: 24px;">User Name</div>
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">허브명</button>
-          <ul class="dropdown-menu">
-            <li v-for="hub in hubs" :key="hub.hub_id">
-              <a class="dropdown-item" href="#" @click="changeHub(hub)">{{hub.hub_name}}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+
+      <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>      </div>
       <div class="nav2">
         <div>
           <router-link to="/monitor" style="text-decoration: none; color: black;">Monitor</router-link>
         </div>
         <div>
-          <router-link to="/" style="text-decoration: none; color: black;">LOGOUT</router-link>
+          <div><a href="/" style="text-decoration: none; color: black;" @click="logout">LOGOUT</a></div>
         </div>
       </div>
       <router-view/>
@@ -44,52 +37,54 @@
 </template>
 
 <script>
+import { api } from "@/utils/axios";
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import { api } from "@/utils/axios"
 
 export default {
-  data() {
+  name: 'LoginPage',
+  data(){
     return{
       isModalOpen: false,
       inputValue: '',
       newPassword: '',
+      member_id: null,
+      default_hub: null,
     }
   },
   mounted(){
-    this.fetchRPiPW();
-
+    this.member_id = localStorage.getItem('user');
+    api.member.getDefaultHub(this.member_id)
+    .then((res) => {
+      this.default_hub = res.data;
+    })
+    .catch((err) => {
+      console.log('ERROR');
+    });
+    api.member.getRPiPW(this.member_id)
+    .then((res) => {
+      this.inputValue = res.data;
+    })
+    .catch((err) => {
+      console.log('error')
+    })
   },
-  methods: {
-    // async fetchRPiPW() {
-    //   try{
-    //     const response = await api.member.getRPiPW(member_id);
-    //     if(response && response.data){
-    //       this.inputValue = response.data.pwd || '000000';
-    //     } else{
-    //       this.inputValue = '000000';
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // },
-    async changeRPiPW() {
-      try{
-        const response = await api.member.setRPiPW(member_id, this.newPassword);
-        if(response && response.data){
-          //console.log(this.isModalOpen);
-          this.isModalOpen = true;
-          //console.log(this.isModalOpen);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+  methods:{
+    logout(){
+      localStorage.removeItem('user');
     },
-    fetchRPiPW(){
-      api.member.getRPiPW(member_id)
+    changeRPiPW(){
+      api.member.setRPiPW({
+        member_id: this.member_id,
+        rpi_pw: this.newPassword,
+      })
       .then((res) => {
         console.log(res.data);
+        this.isModalOpen = true;
       })
+      .catch((err) => {
+        console.log("에러다요")
+      });
     },
     onInput(event){
       event.target.value = event.target.value.replace(/\D/g, "");
@@ -98,7 +93,7 @@ export default {
     closeModal() {
       this.isModalOpen = false;
     },
-  },
+  }
 }
 </script>
 
