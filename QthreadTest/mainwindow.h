@@ -39,7 +39,6 @@ private:
 
 private slots:
     void subscribe_btn();
-    void onMessageArrived(QString message);
 };
 
 #endif // MAINWINDOW_H

@@ -30,7 +30,7 @@ mqtt::async_client client("tcp://k8a206.p.ssafy.io:3333", "1");
 callback cb;
 mqtt::connect_options connOpts;
 
-// MainWindow »ý¼ºÀÚ
+// MainWindow ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -54,19 +54,19 @@ MainWindow::MainWindow(QWidget* parent) :
         std::cerr << "Error: " << exc.what() << std::endl;
     }
 
-    // CAN ¼ÒÄÏ »ý¼º
+    // CAN ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
         perror("Error while creating socket");
     }
 
-    strcpy(ifr.ifr_name, "vcan0"); // CAN ÀÎÅÍÆäÀÌ½º ÀÌ¸§ ¼³Á¤
-    ioctl(sock, SIOCGIFINDEX, &ifr); // ¼ÒÄÏ-³×Æ®¿öÅ© ÀÎÅÍÆäÀÌ½º ¿¬°á
+    strcpy(ifr.ifr_name, "vcan0"); // CAN ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ioctl(sock, SIOCGIFINDEX, &ifr); // ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    // ¼ÒÄÏ ÁÖ¼Ò ±¸Á¶Ã¼ ÃÊ±âÈ­
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ê±ï¿½È­
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
 
-    // ¼ÒÄÏ¿¡ ÁÖ¼Ò ¹ÙÀÎµù
+    // ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½Îµï¿½
     if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         perror("Error in socket bind");
     }
@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget* parent) :
     candump_t->start();
 }
 
-// MainWindow ¼Ò¸êÀÚ
+// MainWindow ï¿½Ò¸ï¿½ï¿½ï¿½
 MainWindow::~MainWindow()
 {
     mqtt::token_ptr unsubtok = client.unsubscribe("test/1");
@@ -99,10 +99,6 @@ MainWindow::~MainWindow()
     delete candump_t;
 
     delete ui;
-}
-
-void MainWindow::onMessageArrived(QString message) {
-    std::cout << "Message arrived: " << message.toStdString() << std::endl;
 }
 
 void MainWindow::subscribe_btn()
