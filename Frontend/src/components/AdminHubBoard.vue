@@ -6,7 +6,7 @@
           <div class="ICON" style="margin: 10px;"></div>
           <div class="LOGO" style="margin: 5px;"></div>
         </div>
-        <div>
+        <div style="margin: 20% 0% 0% 0%;">
           <div style="display: flex; align-items: center;">
             <div class="MemIcon" style="margin: 10px;"></div>
             <router-link to="/admin/member" style="position: relative; width: 80%; text-decoration: none; color: white; font-size: 36px;">회원 등록  &gt;&gt;</router-link>
@@ -29,13 +29,47 @@
     </div>
     <router-view/>
 
+    <div class="item2">
+      <tbody>
+        <th>시리얼: </th>
+        <th><input type="text" v-model="userSerial"></th>
+        <th><button @click="serialCheck">중복확인</button></th>
+      </tbody>
+      <div style="font-size: 36px; width: 200px;"><button :disabled="!isSerialAvailable" @click="saveSeiral">저장</button></div>
+
+    </div>
 
   </div>
 </template>
 
 <script>
-export default {
+import { api } from "@/utils/axios"
 
+export default {
+  data() {
+    return{
+      userSerial: "",
+      isSerialAvailable: false,
+    }
+  },
+  methods: {
+    serialCheck(){
+      api.admin.checkSerial(this.userSerial).then((res) => {
+        alert(res.data);
+        this.isSerialAvailable = true;
+      }).catch((err) => {
+        alert(err.response.data);
+        this.isSerialAvailable = false;
+      });
+    },
+    saveSeiral(){
+      api.admin.setRPiInfo(this.userSerial).then((res) => {
+        alert(res.data);
+      }).catch((err) => {
+        alert(err.response.data);
+      });
+    },
+  },
 }
 </script>
 
@@ -93,5 +127,27 @@ export default {
   width: 20%;
   height: 70px;
 }
+
+.item2{
+  position: absolute;
+  width: 80%;
+  height: 100%;
+  top: 0;
+  left: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.item2 tbody{
+  border-spacing: 30px 70px;
+  font-size: 36px;
+}
+.item2 button{
+  display: block;
+  margin: 0 auto;
+  width: 200px;
+}
+
 
 </style>

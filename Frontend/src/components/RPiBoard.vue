@@ -4,8 +4,8 @@
       <div class="nav1">
         <div class="ICON"></div>
         <div style="font-size: 24px;">User Name</div>
-
-      <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>      </div>
+        <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>
+      </div>
       <div class="nav2">
         <div>
           <router-link to="/monitor" style="text-decoration: none; color: black;">Monitor</router-link>
@@ -76,14 +76,15 @@ export default {
     changeRPiPW(){
       api.member.setRPiPW({
         member_id: this.member_id,
-        rpi_pw: this.newPassword,
+        pwd: this.newPassword,
       })
       .then((res) => {
-        console.log(res.data);
+        console.log(res);
         this.isModalOpen = true;
       })
       .catch((err) => {
         console.log("에러다요")
+        console.log(err.response)
       });
     },
     onInput(event){

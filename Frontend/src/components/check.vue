@@ -5,14 +5,6 @@
         <div class="ICON"></div>
         <div style="font-size: 24px;">User Name</div>
         <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>
-        <!-- <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">허브명</button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Hub No. 1</a></li>
-            <li><a class="dropdown-item" href="#">Hub No. 2</a></li>
-            <li><a class="dropdown-item" href="#">Hub No. 3</a></li>
-          </ul>
-        </div> -->
       </div>
       <div class="nav2">
         <div><router-link to="/rpi" style="text-decoration: none; color: black;">RPi PW</router-link></div>
@@ -78,32 +70,6 @@
               <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 20px;" @click="openModal">SET</button>
             </div>
           </div>
-
-          <div class="module">
-            <div class="name">Module</div>
-            <div>
-              content
-            </div>
-          </div>
-        </div>
-        <div class="dashboard">
-          <div class="name">Dashboard</div>
-          <div style="background-color: white">
-            <thead>
-                <tr>
-                  <th>Timeline</th>
-                  <th>LOG</th>
-                  <th>Message</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>Date</th>
-                  <th>log</th>
-                  <th>message</th>
-                </tr>
-              </tbody>
-          </div>
         </div>
       </div>
     </div>
@@ -126,7 +92,6 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto';
 import { api } from "@/utils/axios";
 
 export default {
@@ -157,23 +122,12 @@ export default {
     .catch((err) => {
       console.log('ERROR');
     });
-    // this.renderChart();
     this.getSettings();
-    // setInterval(this.updateTime, 1000);
   },
   methods: {
     logout(){
       localStorage.removeItem('user');
     },
-    // updateTime(){
-    //   // const now = new Date();
-    //   // const hours = String(now.getHours()).padStart(2, "0");
-    //   // const minutes = String(now.getMinutes()).padStart(2, "0");
-    //   // const seconds = String(now.getSeconds()).padStart(2, "0");
-    //   // this.uptime = `${hours}:${minutes}:${seconds}`;
-    //   this.uptime = new Date().toLocaleTimeString();
-    //   console.log(this.uptime);
-    // },
     async getSettings() {
       try{
         const [tempTargetRes, tempRangeRes, humidTargetRes, humidRangeRes] = await Promise.all([
@@ -192,20 +146,28 @@ export default {
       };
 
     },
-    openModal() {
-      try{
-        Promise.all([
-          api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}),
-          api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}),
-          api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}),
-          api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}),
-        ]);
-        console.log("모든 API 콜 성공")
-        this.isModalOpen = true;
-      } catch (err) {
-        console.log("ERROR: ", err);
-      };
+    openModal(){
+      api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}).then((res) => {
+        console.log(res.data);
+      }).catch((err) => {
+        console.log(err);
+      })
     },
+
+    // async openModal() {
+    //   try{
+    //     await Promise.all([
+    //       api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}),
+    //       api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}),
+    //       api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}),
+    //       api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}),
+    //     ]);
+    //     console.log("모든 API 콜 성공")
+    //     this.isModalOpen = true;
+    //   } catch (err) {
+    //     console.log("ERROR: ", err);
+    //   };
+    // },
     closeModal() {
       this.isModalOpen = false;
     },
@@ -213,141 +175,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.item1{
-  display: flex;
-  /* justify-content: space-between; */
-  background-color: rgb(169, 201, 202);
-  position: absolute;
-  width: 100%;
-  height: 10%;
-  top: 0;
-  left: 0;
-}
-.item1 > *{
-  margin: 0px 10px;
-}
-.item1 > * > div{
-  margin: 0px 7px;
-}
-.nav1{
-  display: flex;
-  align-items: center;
-  margin-right: auto;
-}
-.nav2{
-  display: flex;
-  align-items: center;
-  color: white;
-  margin-left: auto;
-}
-.ICON{
-  background-image: url("../assets/ICON_ICANFARM.png");
-  background-size: cover;
-  width: 81px;
-  height: 91px;
-}
-.uptime{
-  background-color: rgb(45, 51, 51);
-  color: white;
-  font-size: 32px;
-  position: absolute;
-  width: 100%;
-  height: 5%;
-  top: 10%;
-  left: 0%;
-  text-align: right;
-}
-.item2{
-  display: flex;
-  background-color: rgb(45, 51, 51);
-  position: absolute;
-  width: 100%;
-  height: 85%;
-  top: 15%;
-  left: 0;
-}
-.monitor{
-  color: white;
-  font-size: 36px;
-  width: 60%;
-}
-.monitor > * > *{
-  border: 1px black solid;
-}
-.chart-container{
-  position: relative;
-  top: 0px;
-  height: 10%;
-  width: 100%;
-  background-color: white;
-}
-
-.control{
-  /* background-color: rgb(90, 100, 100); */
-  position: relative;
-  width: 40%;
-  
-}
-.Set_Module{
-  display: flex;
-  height: 50%;
-}
-.name{
-  color: black;
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-  background-color: rgb(169, 201, 202);
-  /* width: 400px; */
-}
-/* .name > tbody > tr > th{
-  margin: 0px 20px;
-} */
-.setting{
-  background-color: rgb(90, 100, 100);
-  width: 50%;
-}
-.module{
-  background-color: rgb(90, 100, 100);
-  width: 50%;
-}
-.dashboard{
-  /* height: 50%; */
-}
-
-
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  background-color: white;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-}
-
-.close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-</style>

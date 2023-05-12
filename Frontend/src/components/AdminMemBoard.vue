@@ -6,7 +6,7 @@
           <div class="ICON" style="margin: 10px;"></div>
           <div class="LOGO" style="margin: 5px;"></div>
         </div>
-        <div>
+        <div style="margin: 20% 0% 0% 0%;">
           <div style="display: flex; align-items: center; background-color: rgb(169, 201, 202);">
             <div class="MemIcon" style="margin: 10px;"></div>
             <router-link to="/admin/member" style="position: relative; width: 80%; text-decoration: none; color: white; font-size: 36px;">회원 등록  &gt;&gt;</router-link>
@@ -34,7 +34,7 @@
         <tr>
           <th>이메일:</th>
           <th><input type="text" v-model="userEmail"></th>
-          <th><button @click="doubleCheck">중복확인</button></th>
+          <th><button @click="emailCheck">중복확인</button></th>
         </tr>
         <tr>
           <th>PW:</th>
@@ -69,13 +69,13 @@ export default {
     }
   },
   methods: {
-    doubleCheck(){
+    emailCheck(){
       api.admin.checkEmail(this.userEmail)
       .then((res) => {
-        alert(res.data)
+        alert(res.data);
         this.isEmailAvailable = true;
       }).catch((err) => {
-        alert(err.response.data)
+        alert(err.response.data);
         this.isEmailAvailable = false;
       });
     },

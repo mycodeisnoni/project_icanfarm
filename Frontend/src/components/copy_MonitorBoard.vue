@@ -61,18 +61,18 @@
                 </tr>
                 <tr>
                   <th>TEMP (°C)</th>
-                  <th><input type="text" :placeholder="tempTarget" v-model.lazy="tempTarget" size="3"></th>
-                  <th><input type="text" :placeholder="tempRange" v-model.lazy="tempRange" size="3"></th>
+                  <th><input type="text" :placeholder="tempTarget" v-model="tempTarget" size="3"></th>
+                  <th><input type="text" :placeholder="tempRange" v-model="tempRange" size="3"></th>
                 </tr>
                 <tr>
                   <th>WATER (%)</th>
-                  <th><input type="text" :placeholder="humidTarget" v-model.lazy="humidTarget" size="3"></th>
-                  <th><input type="text" :placeholder="humidRange" v-model.lazy="humidRange" size="3"></th>
+                  <th><input type="text" :placeholder="humidTarget" v-model="humidTarget" size="3"></th>
+                  <th><input type="text" :placeholder="humidRange" v-model="humidRange" size="3"></th>
                 </tr>
                 <tr>
                   <th>LIGHT (H)</th>
-                  <th><input type="text" :placeholder="lightTarget" v-model.lazy="lightTarget" size="3"></th>
-                  <th><input type="text" :placeholder="lightRange" v-model.lazy="lightRange" size="3"></th>
+                  <th><input type="text" :placeholder="lightTarget" v-model="lightTarget" size="3"></th>
+                  <th><input type="text" :placeholder="lightRange" v-model="lightRange" size="3"></th>
                 </tr>
               </tbody>
               <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 20px;" @click="openModal">SET</button>
@@ -159,22 +159,47 @@ export default {
     });
     // this.renderChart();
     this.getSettings();
-    // setInterval(this.updateTime, 1000);
+    setInterval(this.updateTime, 1000);
   },
   methods: {
     logout(){
       localStorage.removeItem('user');
     },
-    // updateTime(){
-    //   // const now = new Date();
-    //   // const hours = String(now.getHours()).padStart(2, "0");
-    //   // const minutes = String(now.getMinutes()).padStart(2, "0");
-    //   // const seconds = String(now.getSeconds()).padStart(2, "0");
-    //   // this.uptime = `${hours}:${minutes}:${seconds}`;
-    //   this.uptime = new Date().toLocaleTimeString();
-    //   console.log(this.uptime);
-    // },
+    updateTime(){
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+      this.uptime = `${hours}:${minutes}:${seconds}`;
+    },
     async getSettings() {
+      console.log("허브 번호는?");
+      console.log(this.default_hub);
+      // await api.hub.getTempTarget(this.default_hub).then((res) => {
+      //   this.tempTarget = res.data.value;
+      // }).catch((err) => {
+      //   console.log("온도 Target 가져오기 에러 발생!");
+      //   console.log(err);
+      // });
+      // await api.hub.getTempRange(this.default_hub).then((res) => {
+      //   this.tempRange = res.data.value;
+      // }).catch ((err) => {
+      //   console.log("온도 Range 가져오기 에러 발생!")
+      //   console.log(err);
+      // });
+      // await api.hub.getHumidTarget(this.default_hub).then((res) => {
+      //   this.humidTarget = res.data.value;
+      // }).catch((err) => {
+      //   console.log("습도 Target 가져오기 에러 발생!")
+      //   console.log(err);
+      // });
+      // await api.hub.getHumidRange(this.default_hub).then((res) => {
+      //   this.humidRange = res.data.value;
+      // }).catch((err) => {
+      //   console.log("습도 Range 가져오기 에러 발생!");
+      //   console.log(err);
+      // });
+
       try{
         const [tempTargetRes, tempRangeRes, humidTargetRes, humidRangeRes] = await Promise.all([
           api.hub.getTempTarget(this.default_hub),
@@ -192,9 +217,29 @@ export default {
       };
 
     },
-    openModal() {
+    async openModal() {
+      // api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}).then((res) => {
+      //   console.log("온도 Target 변경 완료");
+      // }).catch((err) => {
+      //   console.log("온도 Target 변경 실패");
+      // });
+      // api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}).then((res) => {
+      //   console.log("온도 Range 변경 완료");
+      // }).catch((err) => {
+      //   console.log("온도 Range 변경 실패");
+      // });
+      // api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}).then((res) => {
+      //   console.log("습도 Target 변경 완료");
+      // }).catch((err) => {
+      //   console.log("습도 Target 변경 실패");
+      // });
+      // api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}).then((res) => {
+      //   console.log("습도 Range 변경 완료");
+      // }).catch((err) => {
+      //   console.log("습도 Range 변경 실패");
+      // });
       try{
-        Promise.all([
+        await Promise.all([
           api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}),
           api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}),
           api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}),
@@ -209,7 +254,99 @@ export default {
     closeModal() {
       this.isModalOpen = false;
     },
+    renderChart(){
+      const temp = document.getElementById('Temp-Chart').getContext('2d');
+      const humid = document.getElementById('Humid-Chart').getContext('2d');
+      const co2 = document.getElementById('CO2-Chart').getContext('2d');
 
+      this.temp_table= new Chart(temp, {
+        type: 'line',
+        data: {
+          labels: ['10', '11', '12', '13', '14', '15', '16'],
+          datasets: [{
+            data: [21, 35, 76, 32, 67, 53, 81],
+            fill: false,
+            borderColor: 'rgb(226, 81, 80',
+            tension: 0.1,
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+            },
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+      this.humid_table = new Chart(humid, {
+        type: 'line',
+        data: {
+          labels: ['10', '11', '12', '13', '14', '15', '16'],
+          datasets: [{
+            data: [65, 59, 80, 81, 56, 55, 40],
+            fill: false,
+            borderColor: 'rgb(245, 216, 0)',
+            tension: 0.1,
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+            },
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+      this.co2_table = new Chart(co2, {
+        type: 'bar',
+        data: {
+          labels: ['10', '11', '12', '13', '14', '15', '16'],
+          datasets: [{
+            data: [98, 62, 81, 31, 47, 28, 54],
+            fill: false,
+            backgroundColor: 'rgb(75, 174, 122)',
+            tension: 0.1,
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+            },
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            }
+          }
+        }
+      });
+    },
   },
 }
 </script>

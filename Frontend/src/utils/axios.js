@@ -16,10 +16,10 @@ export const api = {
         getRPiPW: (member_id) => {
             return request.get(`/api/rpi/pw/${member_id}`);
         },
-        // RPi 비밀번호 저장
+        // RPi 비밀번호 변경
         // check -> RPiBoard
-        setRPiPW: (member_id, rpi_pw) => {
-            return request.post(`/api/rpi/pw/${member_id}`, {rpi_pw});
+        setRPiPW: ({member_id, pwd}) => {
+            return request.post(`/api/rpi/pw/${member_id}`, {pwd});
         },
         // 허브 리스트
         getHubs: (member_id) => {
@@ -32,30 +32,47 @@ export const api = {
         
     },
     hub: {
-        // 온도 설정 조회
-        getTempSetting: (rpi_id) => {
-            return request.get(`/api/setting/temp/${rpi_id}`);
+        // 온도 target 설정 조회
+        getTempTarget: (rpi_id) => {
+            return request.get(`/api/setting/target/temp/${rpi_id}`);
         },
-        // 온도 설정 저장
-        setTempSetting: (rpi_id, temp) => {
-            return request.post(`/api/setting/temp/${rpi_id}`, {temp});
+        // 온도 range 설정 조회
+        getTempRange: (rpi_id) => {
+            return request.get(`/api/setting/range/temp/${rpi_id}`);
         },
-        // 습도 설정 조회
-        getHumidSetting: (rpi_id) => {
-            return request.get(`/api/setting/humid/${rpi_id}`);
+        // 온도 target 설정 변경
+        setTempTarget: ({rpi_id, value}) => {
+            return request.post(`/api/setting/target/temp/${rpi_id}`, {value});
         },
-        // 습도 설정 저장
-        setHumidSetting: (rpi_id, humid) => {
-            return request.post(`/api/setting/humid/${rpi_id}`, {humid});
+        // 온도 range 설정 변경
+        setTempRange: ({rpi_id, range}) => {
+            return request.post(`/api/setting/range/temp/${rpi_id}`, {range});
         },
-        // 조명 설정 조회
-        getLightSetting: (rpi_id) => {
+        // 습도 target 설정 조회
+        getHumidTarget: (rpi_id) => {
+            return request.get(`/api/setting/target/humid/${rpi_id}`);
+        },
+        // 습도 range 설정 조회
+        getHumidRange: (rpi_id) => {
+            return request.get(`/api/setting/range/humid/${rpi_id}`);
+        },
+        // 습도 target 설정 변경
+        setHumidTarget: ({rpi_id, value}) => {
+            return request.post(`/api/setting/target/humid/${rpi_id}`, {value});
+        },
+        // 습도 range 설정 변경
+        setHumidRange: ({rpi_id, range}) => {
+            return request.post(`/api/setting/range/humid/${rpi_id}`, {range});
+        },
+        // 조명 설정 정보 조회
+        getLightSet: (rpi_id) => {
             return request.get(`/api/setting/light/${rpi_id}`);
         },
-        // 조명 설정 저장
-        setLightSetting: (rpi_id, light) => {
-            return request.post(`/api/setting/light/${rpi_id}`, {light});
+        // 조명 설정 변경
+        setLightSet: ({rpi_id, s_hour, e_hour}) => {
+            return request.post(`/api/setting/light/${rpi_id}`, {s_hour, e_hour});
         },
+
         // 온도 정보 조회
         getTemp: (rpi_id) => {
             return request.get(`/api/temp/${rpi_id}`);
@@ -73,7 +90,7 @@ export const api = {
     },
     admin: {
         // 라즈베리파이 기기 정보 저장
-        setRPiInfo: ({serial}) => {
+        setRPiInfo: (serial) => {
             return request.post('/admin/rpi', {serial});
         },
         // 회원 정보 저장
@@ -93,11 +110,11 @@ export const api = {
             return request.get(`/admin/member/${email}`);
         },
         // RPi 등록
-        setMemberRPi: (member_id, tempModule, lightModule) => {
+        setMemberRPi: ({member_id, tempModule, lightModule}) => {
             return request.post('/admin/member/rpi', {member_id, tempModule, lightModule});
         },
         // RPi 제거
-        delMemberRPi: (member_id, rpi_id) => {
+        delMemberRPi: ({member_id, rpi_id}) => {
             return request.delete(`/admin/member/rpi/${member_id}/${rpi_id}`);
         }
     }
