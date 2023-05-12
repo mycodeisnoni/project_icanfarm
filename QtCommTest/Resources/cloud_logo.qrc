@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>../images/logo_cloud.png</file>
-    </qresource>
-</RCC>
