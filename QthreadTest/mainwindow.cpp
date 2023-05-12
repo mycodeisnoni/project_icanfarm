@@ -73,8 +73,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
     Thread* mqtt_pub_t = new Thread(this, &client, NULL, topic, 0, 0);
     Thread* mqtt_sub_t = new Thread(this, &client, NULL, topic, 0, 1);
-    Thread* cansend_t = new Thread(this, NULL, &frame, topic, sock, 2);
-    Thread* candump_t = new Thread(this, NULL, &frame, topic, sock, 3);
+    Thread* cansend_t = new Thread(this, NULL, &frame, "", sock, 2);
+    Thread* candump_t = new Thread(this, NULL, &frame, "", sock, 3);
 
     mqtt_pub_t->start();
     mqtt_sub_t->start();
