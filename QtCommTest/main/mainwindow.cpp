@@ -17,9 +17,10 @@ MqttCallback cb;
 mqtt::connect_options connOpts;
 
 // Mainwindow 생성자
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
-                                          ui(new Ui::MainWindow),
-                                          client("tcp://k8a206.p.ssafy.io:3333", "1")
+MainWindow::MainWindow(QWidget* parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    client(MQTT_SERVER_ADDRESS, CLIENT_ID)
 {
     ui->setupUi(this);
 
@@ -63,8 +64,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     // 서버에 전원 ON 메시지 전송
     sendMqtt2Server("rpi/admin/power/1", "hi");
 
-    Thread *recvMqttFromServer_t = new Thread(this, &client, NULL, 0, 0);
-    Thread *sensorDataProcess_t = new Thread(this, &client, &frame, sock, 1);
+    Thread* recvMqttFromServer_t = new Thread(this, &client, NULL, 0, 0); // 서버로부터 MQTT 수신 스레드
+    Thread* sensorDataProcess_t = new Thread(this, &client, &frame, sock, 1); // 센서 데이터 수신 + 처리 스레드
 
     recvMqttFromServer_t->start();
     sensorDataProcess_t->start();
@@ -87,12 +88,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// 기존에 수정된 값
-// 만약 비밀번호 틀리면 기존에 수정된 값으로 다시 바꿔야 한다
-double origin_Temp = 30.0;
-double origin_Humid = 64.0;
-int origin_Co2 = 400;
-
+// Setting 값 변경 버튼
 void MainWindow::upTemperature()
 {
     double tmp = ui->temp_setting_text->text().toDouble() + 0.1;
@@ -136,7 +132,7 @@ void MainWindow::goLogout() // logout 함수
 }
 
 // 우측 센서 패널 색 바꾸기
-QString color_arr[] = {"background-color: rgb(61, 91, 101);", "background-color: rgb(255, 255, 0);", "background-color: rgb(255, 0, 255);"};
+QString color_arr[] = { "background-color: rgb(61, 91, 101);", "background-color: rgb(255, 255, 0);", "background-color: rgb(255, 0, 255);" };
 int water_point = 0;
 int wind_point = 0;
 int sun_point = 0;
@@ -167,44 +163,56 @@ void MainWindow::changeValue() // 변경 버튼 눌렀을 때
     login_D = new login_dialog;
 
     // login_dialog의 signal과 mainwindow의 slot 연결
-    connect(login_D, SIGNAL(sendSensorValue(int)), this, SLOT(receiveSensorValue(int)));
+    connect(login_D, SIGNAL(sendLogInResult(int)), this, SLOT(recvLogInResult(int)));
 
     login_D->setModal(true); // modal로 열어야 로그인 창 열려있을 때 메인 창 건드리지 못 함
     login_D->exec();
 }
 
+// 기존에 수정된 값
+// 만약 비밀번호 틀리면 기존에 수정된 값으로 다시 바꿔야 한다
+extern double TEMP_SET;
+extern double HUMID_SET;
+extern int CO2_SET;
+
 // login_dialog로부터 값 받으면 기존의 값으로 바꿀 건지
 // flag == 1이면 값 변경
 // flag == -1이면 값 변경 X
-void MainWindow::receiveSensorValue(int flag)
+void MainWindow::recvLogInResult(int flag)
 {
     qDebug() << flag;
 
     if (flag == 1) // 값 변경됨
     {
         double new_Temp = ui->temp_setting_text->text().toDouble();
-        if (origin_Temp != new_Temp)
+        if (TEMP_SET != new_Temp)
         {
-            origin_Temp = new_Temp;
+            TEMP_SET = new_Temp;
             sendMqtt2Server("rpi/temp/set/1", ui->temp_setting_text->text().toStdString());
             qDebug() << "set TEMP changed to " << ui->temp_setting_text->text().toStdString().c_str();
         }
 
         double new_Humid = ui->humid_setting_text->text().toDouble();
-        if (origin_Humid != new_Humid)
+        if (HUMID_SET != new_Humid)
         {
-            origin_Humid = new_Humid;
+            HUMID_SET = new_Humid;
             sendMqtt2Server("rpi/humid/set/1", ui->humid_setting_text->text().toStdString());
             qDebug() << "set HUMID changed to " << ui->humid_setting_text->text().toStdString().c_str();
         }
 
-        origin_Co2 = ui->co2_setting_text->text().toInt();
+        int new_Co2 = ui->co2_setting_text->text().toDouble();
+        if (CO2_SET != new_Co2)
+        {
+            CO2_SET = new_Co2;
+            sendMqtt2Server("rpi/co2/set/1", ui->co2_setting_text->text().toStdString());
+            qDebug() << "set CO2 changed to " << ui->co2_setting_text->text().toStdString().c_str();
+        }
     }
     else // 값 변경 X, 기존 값으로 돌려놓기
     {
-        ui->temp_setting_text->setText(QString::number(origin_Temp, 'g', 7));
-        ui->humid_setting_text->setText(QString::number(origin_Humid, 'g', 7));
-        ui->co2_setting_text->setText(QString::number(origin_Co2));
+        ui->temp_setting_text->setText(QString::number(TEMP_SET, 'g', 7));
+        ui->humid_setting_text->setText(QString::number(HUMID_SET, 'g', 7));
+        ui->co2_setting_text->setText(QString::number(CO2_SET));
     }
 }
 

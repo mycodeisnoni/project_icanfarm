@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[20];
-    char stringdata0[222];
+    char stringdata0[219];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -46,19 +46,19 @@ QT_MOC_LITERAL(10, 100, 15), // "changeWindColor"
 QT_MOC_LITERAL(11, 116, 14), // "changeSunColor"
 QT_MOC_LITERAL(12, 131, 16), // "changeCloudColor"
 QT_MOC_LITERAL(13, 148, 11), // "changeValue"
-QT_MOC_LITERAL(14, 160, 18), // "receiveSensorValue"
-QT_MOC_LITERAL(15, 179, 4), // "flag"
-QT_MOC_LITERAL(16, 184, 15), // "sendMqtt2Server"
-QT_MOC_LITERAL(17, 200, 11), // "std::string"
-QT_MOC_LITERAL(18, 212, 5), // "topic"
-QT_MOC_LITERAL(19, 218, 3) // "msg"
+QT_MOC_LITERAL(14, 160, 15), // "recvLogInResult"
+QT_MOC_LITERAL(15, 176, 4), // "flag"
+QT_MOC_LITERAL(16, 181, 15), // "sendMqtt2Server"
+QT_MOC_LITERAL(17, 197, 11), // "std::string"
+QT_MOC_LITERAL(18, 209, 5), // "topic"
+QT_MOC_LITERAL(19, 215, 3) // "msg"
 
     },
     "MainWindow\0upTemperature\0\0downTemperature\0"
     "downHumid\0upHumid\0upCo2\0downCo2\0"
     "goLogout\0changeWaterColor\0changeWindColor\0"
     "changeSunColor\0changeCloudColor\0"
-    "changeValue\0receiveSensorValue\0flag\0"
+    "changeValue\0recvLogInResult\0flag\0"
     "sendMqtt2Server\0std::string\0topic\0msg"
 };
 #undef QT_MOC_LITERAL
@@ -129,7 +129,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 9: _t->changeSunColor(); break;
         case 10: _t->changeCloudColor(); break;
         case 11: _t->changeValue(); break;
-        case 12: _t->receiveSensorValue((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->recvLogInResult((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 13: _t->sendMqtt2Server((*reinterpret_cast< const std::string(*)>(_a[1])),(*reinterpret_cast< const std::string(*)>(_a[2]))); break;
         default: ;
         }

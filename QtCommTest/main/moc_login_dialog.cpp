@@ -33,7 +33,7 @@ struct qt_meta_stringdata_login_dialog_t {
 static const qt_meta_stringdata_login_dialog_t qt_meta_stringdata_login_dialog = {
     {
 QT_MOC_LITERAL(0, 0, 12), // "login_dialog"
-QT_MOC_LITERAL(1, 13, 15), // "sendSensorValue"
+QT_MOC_LITERAL(1, 13, 15), // "sendLogInResult"
 QT_MOC_LITERAL(2, 29, 0), // ""
 QT_MOC_LITERAL(3, 30, 4), // "flag"
 QT_MOC_LITERAL(4, 35, 10), // "closeEvent"
@@ -53,7 +53,7 @@ QT_MOC_LITERAL(17, 191, 17), // "btnDelete_clicked"
 QT_MOC_LITERAL(18, 209, 16) // "btnEnter_clicked"
 
     },
-    "login_dialog\0sendSensorValue\0\0flag\0"
+    "login_dialog\0sendLogInResult\0\0flag\0"
     "closeEvent\0QCloseEvent*\0e\0btn0_clicked\0"
     "btn1_clicked\0btn2_clicked\0btn3_clicked\0"
     "btn4_clicked\0btn5_clicked\0btn6_clicked\0"
@@ -120,7 +120,7 @@ void login_dialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         auto *_t = static_cast<login_dialog *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->sendSensorValue((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 0: _t->sendLogInResult((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 1: _t->closeEvent((*reinterpret_cast< QCloseEvent*(*)>(_a[1]))); break;
         case 2: _t->btn0_clicked(); break;
         case 3: _t->btn1_clicked(); break;
@@ -140,7 +140,7 @@ void login_dialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (login_dialog::*)(int );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&login_dialog::sendSensorValue)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&login_dialog::sendLogInResult)) {
                 *result = 0;
                 return;
             }
@@ -189,7 +189,7 @@ int login_dialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void login_dialog::sendSensorValue(int _t1)
+void login_dialog::sendLogInResult(int _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

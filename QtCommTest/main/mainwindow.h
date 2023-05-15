@@ -51,8 +51,8 @@ private slots:
     void changeSunColor();
     void changeCloudColor();
     void changeValue();
-    void receiveSensorValue(int flag); // 로그인 결과에 따라 login_diglog로부터 값 수신
-    void sendMqtt2Server(const std::string topic, const std::string msg);
+    void recvLogInResult(int flag); // 로그인 결과에 따라 login_diglog로부터 값 수신
+    void sendMqtt2Server(const std::string topic, const std::string msg); // 서버로 MQTT 전송
 };
 
 #endif // MAINWINDOW_H

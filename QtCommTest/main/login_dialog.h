@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QMessageBox>
 
-extern std::string NOW_PWD;
+extern std::string PWD;
 
 namespace Ui
 {
@@ -23,7 +23,7 @@ private:
     Ui::login_dialog *ui;
 
 signals:
-    void sendSensorValue(int flag); // 로그인 성공 혹은 실패에 따라 다른 값 전송
+    void sendLogInResult(int flag); // 로그인 성공 혹은 실패에 따라 다른 값 전송
 
 private slots:
     void closeEvent(QCloseEvent *e);

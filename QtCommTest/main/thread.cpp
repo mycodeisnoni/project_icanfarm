@@ -42,7 +42,7 @@ void sensorDataProcess(struct can_frame* frame_, int sock_, mqtt::async_client* 
 {
     while (1)
     {
-        std::cout << "DATA PROCESS ~\n";
+        //std::cout << "DATA PROCESS ~\n";
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
