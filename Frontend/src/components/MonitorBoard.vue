@@ -4,7 +4,7 @@
       <div class="nav1">
         <div class="ICON"></div>
         <div style="font-size: 24px;">User Name</div>
-        <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>
+        <div><button v-bind:title="default_hub">Hub No. {{ default_hub }}</button></div>
         <!-- <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">허브명</button>
           <ul class="dropdown-menu">
@@ -31,19 +31,22 @@
         <div class="temperature">
           <div class="Set_label">Temperature</div>
           <div class="chart-container">
-            <canvas id="Temp-Chart"></canvas>
+            <div class="chart-wrapper"><doughnut-chart :data="TempDonutChart" :options="donutChartOptions" /></div>
+            
           </div>
         </div>
         <div class="humidity">
           <div class="Set_label">Humidity</div>
           <div class="chart-container">
-            <canvas id="Humid-Chart"></canvas>
+            <!-- <canvas id="Humid-Chart"></canvas> -->
+            <doughnut-chart :data="HumidDonutChart" :options="donutChartOptions" />
           </div>
         </div>
         <div class="co2">
           <div class="Set_label">CO2</div>
           <div class="chart-container">
-            <canvas id="CO2-Chart"></canvas>
+            <doughnut-chart :data="CO2DonutChart" :options="donutChartOptions" />
+            <!-- <canvas id="CO2-Chart"></canvas> -->
           </div>
         </div>
       </div>
@@ -71,8 +74,8 @@
                 </tr>
                 <tr>
                   <th>LIGHT (H)</th>
-                  <th><input type="text" :placeholder="lightTarget" v-model.lazy="lightTarget" size="3"></th>
-                  <th><input type="text" :placeholder="lightRange" v-model.lazy="lightRange" size="3"></th>
+                  <th><input type="text" :placeholder="startTimeHour" v-model.lazy="startTimeHour" size="3"></th>
+                  <th><input type="text" :placeholder="endTimeHour" v-model.lazy="endTimeHour" size="3"></th>
                 </tr>
               </tbody>
               <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 20px;" @click="openModal">SET</button>
@@ -116,8 +119,8 @@
         <p>Temperature Range : {{ tempRange }}</p>
         <p>Humid Target : {{ humidTarget }}</p>
         <p>Humid Range : {{ humidRange }}</p>
-        <p>Light Target : {{ lightTarget }}</p>
-        <p>Light Range : {{ lightRange }}</p>
+        <p>Start Time : {{ startTimeHour }}</p>
+        <p>End Time : {{ endTimeHour }}</p>
         <div>변경 완료</div>
       </div>
     </div>
@@ -128,14 +131,19 @@
 <script>
 import Chart from 'chart.js/auto';
 import { api } from "@/utils/axios";
+import DoughnutChart from '@/components/DoughnutChart.vue';
 
 export default {
   name: 'LineChart',
+  components: {
+    DoughnutChart,
+  },
   data() {
     return {
       userName: "",
       default_hub: null,
-      uptime: "",
+      uptime: 0,
+      intervalId: null,
       isModalOpen: false,
       temp_table: null,
       humid_table: null,
@@ -146,6 +154,48 @@ export default {
       humidRange: "",
       lightTarget: "",
       lightRange: "",
+      startTimeHour: null,
+      endTimeHour: null,
+      TempDonutChart: {
+        labels: ['Red', 'Gray'],
+        datasets: [
+          {
+            data: [35, 50-35],
+            backgroundColor: ['#FF6384', '#D9D9D9'],
+            borderWidth: 1,
+          },
+        ],
+      },
+      HumidDonutChart: {
+        labels: ['Yellow', 'Gray'],
+        datasets: [
+          {
+            data: [30, 30],
+            backgroundColor: ['#F5D800', '#D9D9D9'],
+            borderWidth: 1,
+          },
+        ],
+      },
+      CO2DonutChart: {
+        labels: ['Green', 'Gray'],
+        datasets: [
+          {
+            data: [12, 19],
+            backgroundColor: ['#4BAE7A', '#D9D9D9'],
+            borderWidth: 1,
+          },
+        ],
+      },
+      donutChartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: 90,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
     };
   },
   async mounted(){
@@ -157,48 +207,72 @@ export default {
     .catch((err) => {
       console.log('ERROR');
     });
-    // this.renderChart();
+    // this.adjustChartHeight();
     this.getSettings();
-    // setInterval(this.updateTime, 1000);
+    const startTime = localStorage.getItem('startTime');
+    if(startTime){
+      this.startTime = new Date(parseInt(startTime));
+      this.intervalId = setInterval(this.updateUptime, 1000);
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+  localStorage.setItem('startTime', this.startTime.getTime());
+  next();
   },
   methods: {
+    // adjustChartHeight() {
+    //   this.$nextTick(() => {
+    //     const containerHeight = this.$refs.chartContainer.offsetHeight;
+    //     this.$refs.chartContainer.style.height = `${containerHeight}px`;
+    //   });
+    // },
     logout(){
       localStorage.removeItem('user');
+      localStorage.removeItem('startTime');
     },
-    // updateTime(){
-    //   // const now = new Date();
-    //   // const hours = String(now.getHours()).padStart(2, "0");
-    //   // const minutes = String(now.getMinutes()).padStart(2, "0");
-    //   // const seconds = String(now.getSeconds()).padStart(2, "0");
-    //   // this.uptime = `${hours}:${minutes}:${seconds}`;
-    //   this.uptime = new Date().toLocaleTimeString();
-    //   console.log(this.uptime);
-    // },
+    updateUptime(){
+      const now = new Date();
+      const diff = now.getTime() - this.startTime.getTime();
+      this.uptime = (diff/(1000*60*60)).toFixed(2);
+    },
     async getSettings() {
       try{
-        const [tempTargetRes, tempRangeRes, humidTargetRes, humidRangeRes] = await Promise.all([
+        const [tempTargetRes, tempRangeRes, humidTargetRes, humidRangeRes, lightRes] = await Promise.all([
           api.hub.getTempTarget(this.default_hub),
           api.hub.getTempRange(this.default_hub),
           api.hub.getHumidTarget(this.default_hub),
           api.hub.getHumidRange(this.default_hub),
+          api.hub.getLightSet(this.default_hub),
         ]);
         this.tempTarget = tempTargetRes.data.value;
         this.tempRange = tempRangeRes.data.value;
         this.humidTarget = humidTargetRes.data.value;
         this.humidRange = humidRangeRes.data.value;
+        this.startTimeHour = Number.parseInt(lightRes.data.startTime.slice(11, 13));
+        this.endTimeHour = Number.parseInt(lightRes.data.endTime.slice(11, 13));
       } catch (err) {
         console.log('ERROR: ', err);
         throw err;
       };
 
     },
-    openModal() {
+    async openModal() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+
+      const formatTime = (time) => String(time).padStart(2, "0");
       try{
-        Promise.all([
-          api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}),
-          api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}),
-          api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}),
-          api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}),
+        await Promise.all([
+          api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}).then((res) => console.log("1")),
+          api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}).then((res) => console.log("2")),
+          api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}).then((res) => console.log("3")),
+          api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}).then((res) => console.log("4")),
+          api.hub.setLightSet({
+            rpi_id: this.default_hub, 
+            startTime: `${year}-${month}-${day}T${formatTime(this.startTimeHour)}:00:00`,
+            endTime: `${year}-${month}-${day}T${formatTime(this.endTimeHour)}:00:00`},)
         ]);
         console.log("모든 API 콜 성공")
         this.isModalOpen = true;
@@ -273,15 +347,20 @@ export default {
   font-size: 36px;
   width: 60%;
 }
-.monitor > * > *{
+/* .monitor > * > *{
   border: 1px black solid;
-}
+} */
 .chart-container{
   position: relative;
   top: 0px;
   height: 10%;
   width: 100%;
   background-color: white;
+}
+.chart-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .control{

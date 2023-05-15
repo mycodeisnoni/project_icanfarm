@@ -4,7 +4,7 @@
       <div class="nav1">
         <div class="ICON"></div>
         <div style="font-size: 24px;">User Name</div>
-        <div><button v-bind:title="default_hub">{{ default_hub }}</button></div>
+        <div><button v-bind:title="default_hub">Hub No. {{ default_hub }}</button></div>
       </div>
       <div class="nav2">
         <div>
@@ -29,6 +29,7 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
+        <p>{{ message }}</p>
         <p>New RPi Password: {{ newPassword }}</p>
       </div>
     </div>
@@ -50,6 +51,7 @@ export default {
       newPassword: '',
       member_id: null,
       default_hub: null,
+      message: "",
     }
   },
   mounted(){
@@ -68,10 +70,29 @@ export default {
     .catch((err) => {
       console.log('error')
     })
+    const startTime = localStorage.getItem('startTime');
+    if(startTime){
+      this.startTime = new Date(parseInt(startTime));
+      this.intervalId = setInterval(this.updateUptime, 1000);
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+  localStorage.setItem('startTime', this.startTime.getTime());
+  next();
   },
   methods:{
     logout(){
       localStorage.removeItem('user');
+      localStorage.removeItem('startTime');
+    },
+    updateUptime(){
+      const now = new Date();
+      const diff = now.getTime() - this.startTime.getTime();
+      this.uptime = (diff/(1000*60*60)).toFixed(2);
+      // const hours = Math.floor(diff/(1000*60*60));
+      // const minutes = Math.floor((diff/(1000*60)%60));
+      // const seconds = Math.floor((diff/1000)%60);
+      // this.uptime = `${hours} 시간 ${minutes} 분 ${seconds} 초`
     },
     changeRPiPW(){
       api.member.setRPiPW({
@@ -80,6 +101,7 @@ export default {
       })
       .then((res) => {
         console.log(res);
+        this.message = res.data;
         this.isModalOpen = true;
       })
       .catch((err) => {

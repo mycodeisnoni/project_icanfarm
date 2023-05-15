@@ -1,54 +1,68 @@
 <template>
-  <div class="chart-container">
-    <donut-chart :data="chartData" :options="chartOptions" />
+  <div class="chart-wrapper">
+    <doughnut-chart :data="donutChartData" :options="donutChartOptions" />
+    <line-chart :chart-data="lineChartData" :chart-options="lineChartOptions" />
   </div>
 </template>
 
 <script>
-import DonutChart from './chart_Doughnut.vue';
+import DoughnutChart from '@/components/DoughnutChart.vue';
+import LineChart from '@/components/LineChart.vue';
 
 export default {
-  name: 'App',
   components: {
-    DonutChart,
+    DoughnutChart,
+    LineChart,
   },
   data() {
     return {
-      chartData: {
-        labels: ['Red', 'Blue'],
+      donutChartData: {
+        labels: ['Red', 'Blue', 'Yellow'],
         datasets: [
           {
-            label: 'My First Dataset',
-            data: [300, 350-300],
-            backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
-            hoverOffset: 4,
+            label: '# of Votes',
+            data: [12, 19, 3],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            borderWidth: 1,
           },
         ],
       },
-      chartOptions: {
+      donutChartOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        // cutoutPercentage: 90,
+        cutout: 90,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+      lineChartData: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'My First dataset',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 5, 2, 20, 30, 45],
+          },
+        ],
+      },
+      lineChartOptions: {
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
       },
     };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      if (this.$refs.chart) {
-        this.renderChart();
-        const canvas = this.$refs.donutChart.$refs.chart;
-        canvas.height = canvas.offsetWidth;
-        canvas.width = canvas.offsetHeight;
-      }
-    });
   },
 };
 </script>
 
-<style>
-.chart-container {
+<style scoped>
+.chart-wrapper {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 400px;
 }
 </style>

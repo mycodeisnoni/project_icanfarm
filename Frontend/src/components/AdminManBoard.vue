@@ -30,19 +30,78 @@
     <router-view/>
 
     <div class="item2">
-      <tbody>
-        <th>회원:</th>
-        <th><input type="text"></th>
-        <th><button>검색</button></th>
+      <tbody style="width: 80%;">
+        <th style="width: 15%;">회원:</th>
+        <th style="width: 70%;"><input type="text" placeholder="E-mail을 입력하세요." style="width: 100%; box-sizing: border-box;" v-model="userEmail" @keyup.enter="emailCheck"></th>
+        <th style="width: 15%;"><button @click="emailCheck">검색</button></th>
       </tbody>
+
+      <table class="table table-striped table-bordered" style="width: 70%;" v-if="showTable">
+        <thead>
+          <tr style="font-size: 32px; text-align: center;">
+            <th>id</th>
+            <th>rpiNickname</th>
+            <th>rpiSerial</th>
+            <th>joinDate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="member in sortedMembers" :key="member.id" style="font-size: 28px; text-align: center;">
+            <td>{{ member.id }}</td>
+            <td>{{ member.rpiNickname }}</td>
+            <td>{{ member.rpiSerial }}</td>
+            <!-- <td>{{ member.joinDate }}</td> -->
+            <td>
+              {{ new Date(member.joinDate).getFullYear() }}년 
+              {{ new Date(member.joinDate).getMonth() + 1 }}월 
+              {{ new Date(member.joinDate).getDate() }}일 
+              {{ new Date(member.joinDate).getHours() }}시
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
   </div>
 </template>
 
 <script>
-export default {
+import {api} from "@/utils/axios"
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
 
+export default {
+  data(){
+    return {
+      userEmail: "",
+      members: [],
+      showTable: false,
+    }
+  },
+  computed: {
+    sortedMembers(){
+      return this.members.sort((a, b) => {
+        if (a.rpiNickname < b.rpiNickname){
+          return -1;
+        }
+         if (a.rpiNickname > b.rpiNickname){
+          return 1;
+        }
+        return 0;
+      });
+    },
+  },
+  methods: {
+    emailCheck(){
+      api.admin.checkMember(this.userEmail).then((res) => {
+        console.log(res.data);
+        this.members = res.data;
+        this.showTable = true;
+      }).catch((err) => {
+        console.log(err);
+      })
+    },
+  },
 }
 </script>
 
@@ -122,5 +181,7 @@ export default {
   margin: 0 auto;
   width: 200px;
 }
-
+::placeholder {
+  text-align: center;
+}
 </style>

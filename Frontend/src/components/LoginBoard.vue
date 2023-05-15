@@ -3,7 +3,6 @@
     <div class="item1">
       <div class="ICON"></div>
       <div class="LOGO"></div>
-      <!-- <div class="a">start</div> -->
     </div>
     <div class="item2">
       <div class="login">
@@ -53,6 +52,7 @@ export default {
       .then((res) => {
         console.log(res.data);
         localStorage.setItem('user', JSON.stringify(res.data));
+        localStorage.setItem('startTime', new Date().getTime());
         this.$router.push({name : 'Monitor'});
       })
       .catch((error) => {
@@ -66,6 +66,7 @@ export default {
     },
     logout(){
       localStorage.removeItem('user');
+      localStorage.removeItem('startTime');
     },
   }
 }

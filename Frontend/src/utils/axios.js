@@ -45,8 +45,8 @@ export const api = {
             return request.post(`/api/setting/target/temp/${rpi_id}`, {value});
         },
         // 온도 range 설정 변경
-        setTempRange: ({rpi_id, range}) => {
-            return request.post(`/api/setting/range/temp/${rpi_id}`, {range});
+        setTempRange: ({rpi_id, value}) => {
+            return request.post(`/api/setting/range/temp/${rpi_id}`, {value});
         },
         // 습도 target 설정 조회
         getHumidTarget: (rpi_id) => {
@@ -61,16 +61,16 @@ export const api = {
             return request.post(`/api/setting/target/humid/${rpi_id}`, {value});
         },
         // 습도 range 설정 변경
-        setHumidRange: ({rpi_id, range}) => {
-            return request.post(`/api/setting/range/humid/${rpi_id}`, {range});
+        setHumidRange: ({rpi_id, value}) => {
+            return request.post(`/api/setting/range/humid/${rpi_id}`, {value});
         },
         // 조명 설정 정보 조회
         getLightSet: (rpi_id) => {
             return request.get(`/api/setting/light/${rpi_id}`);
         },
         // 조명 설정 변경
-        setLightSet: ({rpi_id, s_hour, e_hour}) => {
-            return request.post(`/api/setting/light/${rpi_id}`, {s_hour, e_hour});
+        setLightSet: ({rpi_id, startTime, endTime}) => {
+            return request.post(`/api/setting/light/${rpi_id}`, {startTime, endTime});
         },
 
         // 온도 정보 조회
@@ -89,21 +89,21 @@ export const api = {
 
     },
     admin: {
-        // 라즈베리파이 기기 정보 저장
-        setRPiInfo: (serial) => {
-            return request.post('/admin/rpi', {serial});
+        // 이메일 중복 확인
+        checkEmail: (email) => {
+            return request.get(`/admin/validation/email/${email}`);
         },
         // 회원 정보 저장
         setMember: ({email, passwd, name}) => {
             return request.post('/admin/member', {email, passwd, name});
         },
-        // 이메일 중복 확인
-        checkEmail: (email) => {
-            return request.get(`/admin/validation/email/${email}`);
-        },
         // 시리얼 번호 중복 검사
         checkSerial: (serial) => {
             return request.get(`/admin/validation/serial/${serial}`);
+        },
+        // 라즈베리파이 기기 정보 저장
+        setRPiInfo: (serial) => {
+            return request.post('/admin/rpi', {serial});
         },
         // 회원 정보 조회
         checkMember: (email) => {
