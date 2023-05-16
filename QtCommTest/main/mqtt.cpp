@@ -41,6 +41,7 @@ void MqttCallback::message_arrived(mqtt::const_message_ptr msg)
     }
     else if (topic == "server/temp/set/" + CLIENT_ID) {
         TEMP_SET = stod(msg->to_string());
+	emit sendServertemp(TEMP_SET); // emit signal temp
         std::cout << "TEMP set at " << TEMP_SET << std::endl;
     }
     else if (topic == "server/temp/range/" + CLIENT_ID) {
@@ -49,6 +50,7 @@ void MqttCallback::message_arrived(mqtt::const_message_ptr msg)
     }
     else if (topic == "server/humid/set/" + CLIENT_ID) {
         HUMID_SET = stod(msg->to_string());
+	emit sendServerhumid(HUMID_SET); // emit signal humid
         std::cout << "HUMID set at " << HUMID_SET << std::endl;
     }
     else if (topic == "server/humid/range/" + CLIENT_ID) {
@@ -56,11 +58,12 @@ void MqttCallback::message_arrived(mqtt::const_message_ptr msg)
         std::cout << "HUMID tolerance range : " << HUMID_RANGE << std::endl;
     }
     else if (topic == "server/co2/set/" + CLIENT_ID) {
-        HUMID_SET = stod(msg->to_string());
+        CO2_SET = stoi(msg->to_string());
+	emit sendServerCo2(CO2_SET); // emit signal co2
         std::cout << "CO2 set at " << CO2_SET << std::endl;
     }
     else if (topic == "server/co2/range/" + CLIENT_ID) {
-        HUMID_RANGE = stod(msg->to_string());
+        CO2_RANGE = stod(msg->to_string());
         std::cout << "CO2 tolerance range : " << CO2_RANGE << std::endl;
     }
 }

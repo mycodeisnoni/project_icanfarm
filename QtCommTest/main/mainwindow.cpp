@@ -69,6 +69,11 @@ MainWindow::MainWindow(QWidget* parent) :
 
     recvMqttFromServer_t->start();
     sensorDataProcess_t->start();
+    
+    // mqtt의 signal과 mainwindow의 slot 연결
+    connect(&cb, SIGNAL(sendServertemp(double)), this, SLOT(changeMqttTemp(double)));
+    connect(&cb, SIGNAL(sendServerhumid(double)), this, SLOT(changeMqttHumid(double)));
+    connect(&cb, SIGNAL(sendServerCo2(int)), this, SLOT(changeMqttCo2(int)));
 }
 
 // 소멸자
@@ -230,4 +235,24 @@ void MainWindow::sendMqtt2Server(const std::string topic, const std::string msg)
     {
         std::cerr << "Error: " << exc.what() << std::endl;
     }
+}
+
+// mqtt.h로부터 받는 slot
+void MainWindow::changeMqttTemp(double t) // mqtt.h에서 보내는 signal과 연결
+{
+  qDebug() << "mqtt-> set TEMP changed to " << t;
+   ui->temp_setting_text->setText(QString::number(t, 'g', 7));
+   TEMP_SET = t;
+}
+void MainWindow::changeMqttHumid(double h) // mqtt.h에서 보내는 signal과 연결
+{
+  qDebug() << "mqtt-> set HUMID changed to " << h;
+   ui->humid_setting_text->setText(QString::number(h, 'g', 7));
+   HUMID_SET = h;
+}
+void MainWindow::changeMqttCo2(int co) // mqtt.h에서 보내는 signal과 연결
+{
+    qDebug() << "mqtt-> set CO2 changed to " << co;
+   ui->temp_setting_text->setText(QString::number(co));
+   CO2_SET = co;
 }
