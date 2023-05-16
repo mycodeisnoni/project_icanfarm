@@ -32,6 +32,7 @@ void stop_motor()
 // 송신함수 
 void SendMessage()
 {
+  /*now_sensing 전송*/
   Serial.print(" SendMessage : ");
 }
  
@@ -46,8 +47,8 @@ void loop()
 {
   sensor = analogRead(A0);    // 센싱
   now_sensing = (float)(1023 - sensor) / 1023 * 100;
-  Serial.println(now_sensing);
-  delay(1000);
+  //Serial.println(now_sensing);
+  //delay(1000);
 
   if (Serial.available()) { // 작동 명령 전달
     if(!flag){    // 미작동중 상태라면
