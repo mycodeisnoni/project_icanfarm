@@ -1,4 +1,3 @@
-#include <LiquidCrystal.h>
 #include <SoftwareSerial.h>
 
 bool flag = false;    // 현재 작동상태 기록
