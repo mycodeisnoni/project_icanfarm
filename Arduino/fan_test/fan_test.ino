@@ -39,7 +39,6 @@ void setup()
 {
   Serial.begin(9600);
   pinMode(motor,OUTPUT);      // 모터핀설정
-  digitalWrite(motor, LOW);
   dht.begin();
   pasttime = millis();
 }
@@ -58,22 +57,10 @@ void loop()
     // delay(1000);
   }
 
+  run_motor();
+  delay(5000);
+  stop_motor();
+  delay(5000);
 
-  if (Serial.available()) { // 작동 명령 전달
-    if(!flag){    // 미작동중 상태라면
-      flag = true;    // 작동 플래그 처리
-      run_motor();
-      past  = millis();
-    }
-  }
-
-  if(millis() - past >= 60000){ // 60초 작동 후 종료
-    stop_motor();
-    flag = false;
-  }
-
-  if(millis() - pasttime >= 600000){  // 10분 마다 송신
-    SendMessage();
-    pasttime = millis();
-  } 
+  
 }
