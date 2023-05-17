@@ -7,22 +7,21 @@
 #include "mqtt/async_client.h"
 
 extern const std::string CLIENT_ID;
-extern mqtt::async_client client;
+extern mqtt::async_client mqtt_client;
 extern mqtt::connect_options connOpts;
 
-class MqttCallback :public QObject, public mqtt::callback
+class MqttCallback :public QObject, public virtual mqtt::callback
 {
-	Q_OBJECT
+    Q_OBJECT
+
 public:
-    //explicit MqttCallback(QObject* parent = nullptr);
     void connection_lost(const std::string& cause) override;
     void message_arrived(mqtt::const_message_ptr msg) override;
 
 signals:
-    void sendServertemp(double t);
-    void sendServerhumid(double h);
+    void sendServerTemp(double t);
+    void sendServerHumid(double h);
     void sendServerCo2(int co);
 };
-
 
 #endif // MQTT_H

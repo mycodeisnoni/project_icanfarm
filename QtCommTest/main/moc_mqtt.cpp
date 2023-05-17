@@ -33,17 +33,17 @@ struct qt_meta_stringdata_MqttCallback_t {
 static const qt_meta_stringdata_MqttCallback_t qt_meta_stringdata_MqttCallback = {
     {
 QT_MOC_LITERAL(0, 0, 12), // "MqttCallback"
-QT_MOC_LITERAL(1, 13, 14), // "sendServertemp"
+QT_MOC_LITERAL(1, 13, 14), // "sendServerTemp"
 QT_MOC_LITERAL(2, 28, 0), // ""
 QT_MOC_LITERAL(3, 29, 1), // "t"
-QT_MOC_LITERAL(4, 31, 15), // "sendServerhumid"
+QT_MOC_LITERAL(4, 31, 15), // "sendServerHumid"
 QT_MOC_LITERAL(5, 47, 1), // "h"
 QT_MOC_LITERAL(6, 49, 13), // "sendServerCo2"
 QT_MOC_LITERAL(7, 63, 2) // "co"
 
     },
-    "MqttCallback\0sendServertemp\0\0t\0"
-    "sendServerhumid\0h\0sendServerCo2\0co"
+    "MqttCallback\0sendServerTemp\0\0t\0"
+    "sendServerHumid\0h\0sendServerCo2\0co"
 };
 #undef QT_MOC_LITERAL
 
@@ -79,8 +79,8 @@ void MqttCallback::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         auto *_t = static_cast<MqttCallback *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->sendServertemp((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 1: _t->sendServerhumid((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 0: _t->sendServerTemp((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 1: _t->sendServerHumid((*reinterpret_cast< double(*)>(_a[1]))); break;
         case 2: _t->sendServerCo2((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
@@ -88,14 +88,14 @@ void MqttCallback::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (MqttCallback::*)(double );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MqttCallback::sendServertemp)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MqttCallback::sendServerTemp)) {
                 *result = 0;
                 return;
             }
         }
         {
             using _t = void (MqttCallback::*)(double );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MqttCallback::sendServerhumid)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MqttCallback::sendServerHumid)) {
                 *result = 1;
                 return;
             }
@@ -153,14 +153,14 @@ int MqttCallback::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void MqttCallback::sendServertemp(double _t1)
+void MqttCallback::sendServerTemp(double _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
-void MqttCallback::sendServerhumid(double _t1)
+void MqttCallback::sendServerHumid(double _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);

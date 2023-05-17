@@ -3,16 +3,10 @@
 #include "QDebug"
 #include <string>
 
-// CAN communication variables
-int sock;
-struct sockaddr_can addr;
-struct can_frame frame;
-struct ifreq ifr;
-
 // Create MQTT client instance
 const std::string MQTT_SERVER_ADDRESS = "tcp://k8a206.p.ssafy.io:3333";
-const std::string CLIENT_ID = "1";
-mqtt::async_client client(MQTT_SERVER_ADDRESS, CLIENT_ID);
+const std::string CLIENT_ID = "3";
+mqtt::async_client mqtt_client(MQTT_SERVER_ADDRESS, CLIENT_ID);
 MqttCallback cb;
 mqtt::connect_options connOpts;
 
@@ -20,20 +14,20 @@ mqtt::connect_options connOpts;
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    client(MQTT_SERVER_ADDRESS, CLIENT_ID)
+    mqtt_client(MQTT_SERVER_ADDRESS, CLIENT_ID)
 {
     ui->setupUi(this);
 
     // Set up MQTT client options
     mqtt::connect_options connOpts;
     connOpts.set_keep_alive_interval(20);
-    client.set_callback(cb);
+    mqtt_client.set_callback(cb);
     connOpts.set_clean_session(true);
 
     std::cout << "Connecting to the MQTT server..." << std::endl;
     try
     {
-        mqtt::token_ptr conntok = client.connect(connOpts);
+        mqtt::token_ptr conntok = mqtt_client.connect(connOpts);
         conntok->wait();
         std::cout << "Connected." << std::endl;
     }
@@ -42,48 +36,48 @@ MainWindow::MainWindow(QWidget* parent) :
         std::cerr << "Error: " << exc.what() << std::endl;
     }
 
-    // CAN 소켓 생성
-    if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0)
+    // 포트연결 
+    serial_port = new QSerialPort();
+    serial_port->setPortName("/dev/pts/4");
+    serial_port->setBaudRate(QSerialPort::Baud115200);
+    serial_port->setDataBits(QSerialPort::Data8);
+    serial_port->setParity(QSerialPort::NoParity);
+    serial_port->setStopBits(QSerialPort::OneStop);
+    serial_port->setFlowControl(QSerialPort::NoFlowControl);
+    if (serial_port->open(QIODevice::ReadWrite))
     {
-        perror("Error while creating socket");
+        // Serial port is opened and ready for communication
+        std::cout << "Serial port is opened." << std::endl;
     }
-
-    strcpy(ifr.ifr_name, "vcan0");   // CAN 인터페이스 이름 설정
-    ioctl(sock, SIOCGIFINDEX, &ifr); // 소켓-네트워크 인터페이스 연결
-
-    // 소켓 주소 구조체 초기화
-    addr.can_family = AF_CAN;
-    addr.can_ifindex = ifr.ifr_ifindex;
-
-    // 소켓에 주소 바인딩
-    if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    else
     {
-        perror("Error in socket bind");
+        // Failed to open serial port
+        std::cerr << "Failed to open serial port." << std::endl;
     }
 
     // 서버에 전원 ON 메시지 전송
-    sendMqtt2Server("rpi/admin/power/1", "hi");
+    sendMqtt2Server("rpi/admin/power/" + CLIENT_ID, "hi");
 
-    Thread* recvMqttFromServer_t = new Thread(this, &client, NULL, 0, 0); // 서버로부터 MQTT 수신 스레드
-    Thread* sensorDataProcess_t = new Thread(this, &client, &frame, sock, 1); // 센서 데이터 수신 + 처리 스레드
+    Thread* recvMqttFromServer_t = new Thread(this, &mqtt_client, NULL, 0); // 서버로부터 MQTT 수신 스레드
+    Thread* sensorDataProcess_t = new Thread(this, &mqtt_client, serial_port, 1); // 센서 데이터 수신 + 처리 스레드
 
     recvMqttFromServer_t->start();
     sensorDataProcess_t->start();
-    
+
     // mqtt의 signal과 mainwindow의 slot 연결
-    connect(&cb, SIGNAL(sendServertemp(double)), this, SLOT(changeMqttTemp(double)));
-    connect(&cb, SIGNAL(sendServerhumid(double)), this, SLOT(changeMqttHumid(double)));
-    connect(&cb, SIGNAL(sendServerCo2(int)), this, SLOT(changeMqttCo2(int)));
+    connect(&cb, SIGNAL(sendServerTemp(double)), this, SLOT(applyServerTemp(double)));
+    connect(&cb, SIGNAL(sendServerHumid(double)), this, SLOT(applyServerHumid(double)));
+    connect(&cb, SIGNAL(sendServerCo2(int)), this, SLOT(applyServerCo2(int)));
 }
 
 // 소멸자
 MainWindow::~MainWindow()
 {
-    mqtt::token_ptr unsubtok = client.unsubscribe("test/1");
+    mqtt::token_ptr unsubtok = mqtt_client.unsubscribe("test/1");
     unsubtok->wait();
 
     // Disconnect from the MQTT server
-    mqtt::token_ptr disctok = client.disconnect();
+    mqtt::token_ptr disctok = mqtt_client.disconnect();
     disctok->wait();
 
     // Delete dynamically allocated threads
@@ -193,7 +187,7 @@ void MainWindow::recvLogInResult(int flag)
         if (TEMP_SET != new_Temp)
         {
             TEMP_SET = new_Temp;
-            sendMqtt2Server("rpi/temp/set/1", ui->temp_setting_text->text().toStdString());
+            sendMqtt2Server("rpi/temp/set/" + CLIENT_ID, ui->temp_setting_text->text().toStdString());
             qDebug() << "set TEMP changed to " << ui->temp_setting_text->text().toStdString().c_str();
         }
 
@@ -201,7 +195,7 @@ void MainWindow::recvLogInResult(int flag)
         if (HUMID_SET != new_Humid)
         {
             HUMID_SET = new_Humid;
-            sendMqtt2Server("rpi/humid/set/1", ui->humid_setting_text->text().toStdString());
+            sendMqtt2Server("rpi/humid/set/" + CLIENT_ID, ui->humid_setting_text->text().toStdString());
             qDebug() << "set HUMID changed to " << ui->humid_setting_text->text().toStdString().c_str();
         }
 
@@ -209,7 +203,7 @@ void MainWindow::recvLogInResult(int flag)
         if (CO2_SET != new_Co2)
         {
             CO2_SET = new_Co2;
-            sendMqtt2Server("rpi/co2/set/1", ui->co2_setting_text->text().toStdString());
+            sendMqtt2Server("rpi/co2/set/" + CLIENT_ID, ui->co2_setting_text->text().toStdString());
             qDebug() << "set CO2 changed to " << ui->co2_setting_text->text().toStdString().c_str();
         }
     }
@@ -228,7 +222,7 @@ void MainWindow::sendMqtt2Server(const std::string topic, const std::string msg)
 
     try
     {
-        mqtt::token_ptr pubtok = client.publish(pubmsg);
+        mqtt::token_ptr pubtok = mqtt_client.publish(pubmsg);
         pubtok->wait();
     }
     catch (const mqtt::exception& exc)
@@ -238,21 +232,21 @@ void MainWindow::sendMqtt2Server(const std::string topic, const std::string msg)
 }
 
 // mqtt.h로부터 받는 slot
-void MainWindow::changeMqttTemp(double t) // mqtt.h에서 보내는 signal과 연결
+void MainWindow::applyServerTemp(double t) // mqtt.h에서 보내는 signal과 연결
 {
-  qDebug() << "mqtt-> set TEMP changed to " << t;
-   ui->temp_setting_text->setText(QString::number(t, 'g', 7));
-   TEMP_SET = t;
+    qDebug() << "server TEMP applied :  " << t;
+    ui->temp_setting_text->setText(QString::number(t, 'g', 7));
+    TEMP_SET = t;
 }
-void MainWindow::changeMqttHumid(double h) // mqtt.h에서 보내는 signal과 연결
+void MainWindow::applyServerHumid(double h) // mqtt.h에서 보내는 signal과 연결
 {
-  qDebug() << "mqtt-> set HUMID changed to " << h;
-   ui->humid_setting_text->setText(QString::number(h, 'g', 7));
-   HUMID_SET = h;
+    qDebug() << "server HUMID applied : " << h;
+    ui->humid_setting_text->setText(QString::number(h, 'g', 7));
+    HUMID_SET = h;
 }
-void MainWindow::changeMqttCo2(int co) // mqtt.h에서 보내는 signal과 연결
+void MainWindow::applyServerCo2(int co) // mqtt.h에서 보내는 signal과 연결
 {
-    qDebug() << "mqtt-> set CO2 changed to " << co;
-   ui->temp_setting_text->setText(QString::number(co));
-   CO2_SET = co;
+    qDebug() << "server CO2 applied : " << co;
+    ui->co2_setting_text->setText(QString::number(co));
+    CO2_SET = co;
 }

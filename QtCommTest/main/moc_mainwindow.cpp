@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[26];
-    char stringdata0[271];
+    char stringdata0[274];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -52,12 +52,12 @@ QT_MOC_LITERAL(16, 181, 15), // "sendMqtt2Server"
 QT_MOC_LITERAL(17, 197, 11), // "std::string"
 QT_MOC_LITERAL(18, 209, 5), // "topic"
 QT_MOC_LITERAL(19, 215, 3), // "msg"
-QT_MOC_LITERAL(20, 219, 14), // "changeMqttTemp"
-QT_MOC_LITERAL(21, 234, 1), // "t"
-QT_MOC_LITERAL(22, 236, 15), // "changeMqttHumid"
-QT_MOC_LITERAL(23, 252, 1), // "h"
-QT_MOC_LITERAL(24, 254, 13), // "changeMqttCo2"
-QT_MOC_LITERAL(25, 268, 2) // "co"
+QT_MOC_LITERAL(20, 219, 15), // "applyServerTemp"
+QT_MOC_LITERAL(21, 235, 1), // "t"
+QT_MOC_LITERAL(22, 237, 16), // "applyServerHumid"
+QT_MOC_LITERAL(23, 254, 1), // "h"
+QT_MOC_LITERAL(24, 256, 14), // "applyServerCo2"
+QT_MOC_LITERAL(25, 271, 2) // "co"
 
     },
     "MainWindow\0upTemperature\0\0downTemperature\0"
@@ -66,8 +66,8 @@ QT_MOC_LITERAL(25, 268, 2) // "co"
     "changeSunColor\0changeCloudColor\0"
     "changeValue\0recvLogInResult\0flag\0"
     "sendMqtt2Server\0std::string\0topic\0msg\0"
-    "changeMqttTemp\0t\0changeMqttHumid\0h\0"
-    "changeMqttCo2\0co"
+    "applyServerTemp\0t\0applyServerHumid\0h\0"
+    "applyServerCo2\0co"
 };
 #undef QT_MOC_LITERAL
 
@@ -145,9 +145,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 11: _t->changeValue(); break;
         case 12: _t->recvLogInResult((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 13: _t->sendMqtt2Server((*reinterpret_cast< const std::string(*)>(_a[1])),(*reinterpret_cast< const std::string(*)>(_a[2]))); break;
-        case 14: _t->changeMqttTemp((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 15: _t->changeMqttHumid((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 16: _t->changeMqttCo2((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 14: _t->applyServerTemp((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 15: _t->applyServerHumid((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 16: _t->applyServerCo2((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }

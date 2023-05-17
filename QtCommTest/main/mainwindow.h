@@ -8,13 +8,9 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 #include "ui_mainwindow.h"
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <linux/can.h>
-#include <linux/can/raw.h>
 #include "thread.h"
 #include "mqtt.h"
 #include "login_dialog.h"
@@ -34,7 +30,8 @@ public:
 private:
     Ui::MainWindow* ui;
     login_dialog* login_D; // login dialog
-    mqtt::async_client client;
+    mqtt::async_client mqtt_client;
+    QSerialPort* serial_port;
     Thread* recvMqttFromServer_t;
     Thread* sensorDataProcess_t;
 
@@ -53,10 +50,9 @@ private slots:
     void changeValue();
     void recvLogInResult(int flag); // 로그인 결과에 따라 login_diglog로부터 값 수신
     void sendMqtt2Server(const std::string topic, const std::string msg); // 서버로 MQTT 전송
-    void changeMqttTemp(double t); // mqtt.h에서 보내는 signal과 연결
-    void changeMqttHumid(double h); // mqtt.h에서 보내는 signal과 연결
-    void changeMqttCo2(int co); // mqtt.h에서 보내는 signal과 연결
-    
+    void applyServerTemp(double t); // mqtt.h에서 보내는 signal과 연결
+    void applyServerHumid(double h); // mqtt.h에서 보내는 signal과 연결
+    void applyServerCo2(int co); // mqtt.h에서 보내는 signal과 연결
 };
 
 #endif // MAINWINDOW_H
