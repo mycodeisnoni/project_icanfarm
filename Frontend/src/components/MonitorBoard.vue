@@ -349,7 +349,7 @@ export default {
           api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}).then((res) => console.log("4")),
           api.hub.setLightSet({
             rpi_id: this.default_hub, 
-            startTime: `${year}-${month}-${day}T${formatTime(this.startTimeHour)}:00:00`,
+            startTime: `${yenpmar}-${month}-${day}T${formatTime(this.startTimeHour)}:00:00`,
             endTime: `${year}-${month}-${day}T${formatTime(this.endTimeHour)}:00:00`},)
         ]);
         console.log("모든 API 콜 성공")

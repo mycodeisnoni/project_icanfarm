@@ -31,8 +31,8 @@
 
     <div class="item2">
       <tbody style="width: 80%;">
-        <th style="width: 15%;">회원:</th>
-        <th style="width: 70%;"><input type="text" placeholder="E-mail을 입력하세요." style="width: 100%; box-sizing: border-box;" v-model="userEmail" @keyup.enter="emailCheck"></th>
+        <th style="width: 15%; text-align: right;">회원:</th>
+        <th style="width: 50%;"><input type="text" placeholder="E-mail을 입력하세요." style="width: 100%; box-sizing: border-box;" v-model="userEmail" @keyup.enter="emailCheck"></th>
         <th style="width: 15%;"><button @click="emailCheck">검색</button></th>
       </tbody>
 
