@@ -14,15 +14,22 @@ export default {
       type: Object,
       required: true,
     },
-    options: {
-      type: Object,
-      default: () => ({
-      }),
-    },
+  },
+  data(){
+    return{
+      chartOptions: {
+        // responsive: false,
+        // maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false, // 레전드를 숨김
+          },
+        },
+      }
+    }
   },
   mounted() {
     this.renderChart();
-    // this.adjustHeight();
   },
   beforeUpdate() {
     if (this.chart) {
@@ -45,29 +52,9 @@ export default {
       this.chart = new Chart(ctx, {
         type: 'doughnut',
         data: this.data,
-        options: this.options,
+        options: this.chartOptions,
       });
     },
-    // adjustHeight() {
-    //   this.$nextTick(() => {
-    //     const containerHeight = this.$refs.container.offsetHeight;
-    //     this.$refs.chart.style.height = `${containerHeight}px`;
-    //   });
-    // },
   },
 };
 </script>
-
-<style scoped>
-/* .chart-container {
-  position: relative;
-  top: 0px;
-  height: 10%;
-  width: 100%;
-  background-color: white;
-}
-
-.chart-container canvas {
-  height: 100%;
-} */
-</style>

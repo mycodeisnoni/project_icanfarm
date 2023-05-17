@@ -3,7 +3,7 @@
     <div class="item1">
       <div class="nav1">
         <div class="ICON"></div>
-        <div style="font-size: 24px;">User Name</div>
+        <div style="font-size: 36px;">{{ userName }}</div>
         <div><button v-bind:title="default_hub">Hub No. {{ default_hub }}</button></div>
       </div>
       <div class="nav2">
@@ -21,16 +21,22 @@
       <div class="PW_box">
         <!-- <div></div> -->
         <label for="" style="font-size: 48px; font-weight: bold;">RPi Password</label>
-        <input type="text" style="font-size: 64px; text-align: center;" v-model="newPassword" @input="onInput" maxlength="6" size="6" :placeholder="inputValue">
+        <input type="text" style="font-size: 64px; text-align: center;" v-model="newPassword" @input="onInput" maxlength="6" size="6" :placeholder="inputValue" @keyup.enter="changeRPiPW">
         <button type="button" style="font-size: 24px; height: 50px; width: 100px;" :disabled="newPassword.length !== 6" @click="changeRPiPW">SAVE</button>
       </div>
     </div>
-                
-    <div class="modal" v-if="isModalOpen">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <p>{{ message }}</p>
-        <p>New RPi Password: {{ newPassword }}</p>
+
+    <div class="modal" tabindex="-1" v-if="isModalOpen" @keyup.enter="closeModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><h2>New RPi Password</h2></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeModal"></button>
+          </div>
+          <div class="modal-body">
+            <p>{{ message }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -46,6 +52,7 @@ export default {
   name: 'LoginPage',
   data(){
     return{
+      userName: "",
       isModalOpen: false,
       inputValue: '',
       newPassword: '',
@@ -56,6 +63,7 @@ export default {
   },
   mounted(){
     this.member_id = localStorage.getItem('user');
+    this.userName = localStorage.getItem('username');
     api.member.getDefaultHub(this.member_id)
     .then((res) => {
       this.default_hub = res.data;
@@ -84,6 +92,7 @@ export default {
     logout(){
       localStorage.removeItem('user');
       localStorage.removeItem('startTime');
+      localStorage.removeItem('username');
     },
     updateUptime(){
       const now = new Date();

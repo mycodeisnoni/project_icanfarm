@@ -3,16 +3,9 @@
     <div class="item1">
       <div class="nav1">
         <div class="ICON"></div>
-        <div style="font-size: 24px;">User Name</div>
+        <div style="font-size: 36px;">{{ userName }}</div>
         <div><button v-bind:title="default_hub">Hub No. {{ default_hub }}</button></div>
-        <!-- <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">허브명</button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Hub No. 1</a></li>
-            <li><a class="dropdown-item" href="#">Hub No. 2</a></li>
-            <li><a class="dropdown-item" href="#">Hub No. 3</a></li>
-          </ul>
-        </div> -->
+
       </div>
       <div class="nav2">
         <div><router-link to="/rpi" style="text-decoration: none; color: black;">RPi PW</router-link></div>
@@ -22,31 +15,46 @@
     </div>
 
     <div class="uptime">
-      <span>UPTIME</span>
-      <span style="background-color: rgb(61, 91, 101)">{{ uptime }}h</span>
+      <span style="position: absolute; right: 90px;">UPTIME</span>
+      <span style="background-color: rgb(61, 91, 101); margin-right: 10px;">{{ uptime }}h</span>
     </div>
 
     <div class="item2">
       <div class="monitor">
-        <div class="temperature">
+        <div class="temperature" style="height: 33%;">
           <div class="Set_label">Temperature</div>
-          <div class="chart-container">
-            <div class="chart-wrapper"><doughnut-chart :data="TempDonutChart" :options="donutChartOptions" /></div>
-            
+          <div style="height: 100%; display: flex; justify-content: center;">
+            <div class="graph-doughnut">
+              <DoughnutChart :data="TempDonutChart" :options="TempDonutChartOptions"/>
+              <div style="color: black; font-size: 32px; position: absolute; top: 85px; left: 140px;">°C</div>
+            </div>
+            <div class="graph-line">
+              <LineChart :chart-data="TempLineChart" :chart-options="lineChartOptions" />
+            </div>
           </div>
         </div>
-        <div class="humidity">
+        <div class="humidity" style="height: 33%;">
           <div class="Set_label">Humidity</div>
-          <div class="chart-container">
-            <!-- <canvas id="Humid-Chart"></canvas> -->
-            <doughnut-chart :data="HumidDonutChart" :options="donutChartOptions" />
+          <div style="height: 100%; display: flex; justify-content: center;">
+            <div class="graph-doughnut">
+              <DoughnutChart :data="HumidDonutChart" :options="donutChartOptions"/>
+              <div style="color: black; font-size: 32px; position: absolute; top: 85px; left: 140px;">%</div>
+            </div>
+            <div class="graph-line">
+              <LineChart :chart-data="HumidLineChart" :chart-options="lineChartOptions" />
+            </div>
           </div>
         </div>
-        <div class="co2">
+        <div class="co2" style="height: 33%;">
           <div class="Set_label">CO2</div>
-          <div class="chart-container">
-            <doughnut-chart :data="CO2DonutChart" :options="donutChartOptions" />
-            <!-- <canvas id="CO2-Chart"></canvas> -->
+          <div style="height: 100%; display: flex; justify-content: center;">
+            <div class="graph-doughnut">
+              <DoughnutChart :data="CO2DonutChart" :options="donutChartOptions"/>
+              <div style="color: black; font-size: 24px; position: absolute; top: 85px; left: 140px;">ppm</div>
+            </div>
+            <div class="graph-line">
+              <LineChart :chart-data="CO2LineChart" :chart-options="lineChartOptions" />
+            </div>
           </div>
         </div>
       </div>
@@ -55,7 +63,7 @@
         <div class="Set_Module">
           <div class="setting">
             <div class="name">Setting</div>
-            <div style="font-size: 130%; padding: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="border: 1px black solid; height: 83%; font-size: 130%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgb(90, 100, 100); margin: 10px 0px;">
               <tbody style="border-spacing: 20px;">
                 <tr style="text-align: center;">
                   <th>SENSOR</th>
@@ -78,19 +86,26 @@
                   <th><input type="text" :placeholder="endTimeHour" v-model.lazy="endTimeHour" size="3"></th>
                 </tr>
               </tbody>
-              <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 20px;" @click="openModal">SET</button>
+              <button type="button" style="font-size: 24px; height: 50px; width: 100px; margin-top: 15px;" @click="openModal">SET</button>
             </div>
           </div>
 
           <div class="module">
             <div class="name">Module</div>
-            <div>
-              content
+            <div style="height: 83%; display: flex; flex-direction: column; justify-content: space-between; margin: 10px 0px;">
+              <div style="display: flex; justify-content: space-between">
+                <div :class="{'m_humid_on': humidModule, 'm_humid_off': !humidModule}"></div>
+                <div :class="{'m_light_on': lightModule, 'm_light_off': !lightModule}"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <div :class="{'m_co2_on': co2Module, 'm_co2_off': !co2Module}"></div>
+                <div :class="{'m_fan_on': fanModule, 'm_fan_off': !fanModule}"></div>
+              </div>
             </div>
           </div>
         </div>
         <div class="dashboard">
-          <div class="name">Dashboard</div>
+          <div class="name">Notification</div>
           <div style="background-color: white">
             <thead>
                 <tr>
@@ -111,17 +126,23 @@
       </div>
     </div>
 
-    <div class="modal" v-if="isModalOpen">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>Settings</h2>
-        <p>Temperature Target : {{ tempTarget }}</p>
-        <p>Temperature Range : {{ tempRange }}</p>
-        <p>Humid Target : {{ humidTarget }}</p>
-        <p>Humid Range : {{ humidRange }}</p>
-        <p>Start Time : {{ startTimeHour }}</p>
-        <p>End Time : {{ endTimeHour }}</p>
-        <div>변경 완료</div>
+    <div class="modal" tabindex="-1" v-if="isModalOpen">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><h2>Settings</h2></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeModal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Temperature Target : {{ tempTarget }}</p>
+            <p>Temperature Range : {{ tempRange }}</p>
+            <p>Humid Target : {{ humidTarget }}</p>
+            <p>Humid Range : {{ humidRange }}</p>
+            <p>Start Time : {{ startTimeHour }}</p>
+            <p>End Time : {{ endTimeHour }}</p>
+            <div>변경 완료</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -129,14 +150,14 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto';
 import { api } from "@/utils/axios";
 import DoughnutChart from '@/components/DoughnutChart.vue';
+import LineChart from '@/components/LineChart.vue';
 
 export default {
-  name: 'LineChart',
   components: {
     DoughnutChart,
+    LineChart,
   },
   data() {
     return {
@@ -156,6 +177,10 @@ export default {
       lightRange: "",
       startTimeHour: null,
       endTimeHour: null,
+      humidModule: false,
+      lightModule: false,
+      co2Module: false,
+      fanModule: false,
       TempDonutChart: {
         labels: ['Red', 'Gray'],
         datasets: [
@@ -163,6 +188,28 @@ export default {
             data: [35, 50-35],
             backgroundColor: ['#FF6384', '#D9D9D9'],
             borderWidth: 1,
+          },
+        ],
+      },
+      TempDonutChartOptions: {
+        responsive: false,
+        cutout: 90,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'temp',
+          }
+        },
+      },
+      TempLineChart: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 5, 2, 20, 30, 45],
           },
         ],
       },
@@ -176,6 +223,16 @@ export default {
           },
         ],
       },
+      HumidLineChart: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'My First dataset',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 5, 2, 20, 30, 45],
+          },
+        ],
+      },
       CO2DonutChart: {
         labels: ['Green', 'Gray'],
         datasets: [
@@ -186,10 +243,27 @@ export default {
           },
         ],
       },
+      CO2LineChart: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'My First dataset',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 5, 2, 20, 30, 45],
+          },
+        ],
+      },
+
       donutChartOptions: {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: false,
         cutout: 90,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+      lineChartOptions: {
         plugins: {
           legend: {
             display: false,
@@ -200,14 +274,23 @@ export default {
   },
   async mounted(){
     this.member_id = localStorage.getItem('user');
+    this.userName = localStorage.getItem('username');
     await api.member.getDefaultHub(this.member_id)
     .then((res) => {
       this.default_hub = res.data;
-    })
-    .catch((err) => {
-      console.log('ERROR');
+    }).catch((err) => {
+      console.log(err);
     });
-    // this.adjustChartHeight();
+    await api.hub.getModuleInfo(this.default_hub)
+    .then((res) => {
+      this.humidModule = res.data.isHumid;
+      this.lightModule = res.data.isLight;
+      this.co2Module = res.data.isCo2;
+      this.fanModule = res.data.isFan;
+    }).catch((err) => {
+      console.log(err);
+    })
+
     this.getSettings();
     const startTime = localStorage.getItem('startTime');
     if(startTime){
@@ -220,15 +303,10 @@ export default {
   next();
   },
   methods: {
-    // adjustChartHeight() {
-    //   this.$nextTick(() => {
-    //     const containerHeight = this.$refs.chartContainer.offsetHeight;
-    //     this.$refs.chartContainer.style.height = `${containerHeight}px`;
-    //   });
-    // },
     logout(){
       localStorage.removeItem('user');
       localStorage.removeItem('startTime');
+      localStorage.removeItem('username');
     },
     updateUptime(){
       const now = new Date();
@@ -289,9 +367,11 @@ export default {
 </script>
 
 <style scoped>
+/* div{
+  border: 1px black solid;
+} */
 .item1{
   display: flex;
-  /* justify-content: space-between; */
   background-color: rgb(169, 201, 202);
   position: absolute;
   width: 100%;
@@ -317,7 +397,7 @@ export default {
   margin-left: auto;
 }
 .ICON{
-  background-image: url("../assets/ICON_ICANFARM.png");
+  background-image: url("@/assets/ICON_ICANFARM.png");
   background-size: cover;
   width: 81px;
   height: 91px;
@@ -325,7 +405,7 @@ export default {
 .uptime{
   background-color: rgb(45, 51, 51);
   color: white;
-  font-size: 32px;
+  font-size: 28px;
   position: absolute;
   width: 100%;
   height: 5%;
@@ -346,32 +426,43 @@ export default {
   color: white;
   font-size: 36px;
   width: 60%;
+  height: 100%;
 }
-/* .monitor > * > *{
-  border: 1px black solid;
-} */
-.chart-container{
-  position: relative;
-  top: 0px;
-  height: 10%;
-  width: 100%;
+.Set_label{
+  height: 20%;
+  font-size: 30px;
+}
+
+.graph-doughnut{
+  height: 80%;
+  width: 25%;
   background-color: white;
+  position: relative;
 }
-.chart-wrapper {
-  display: flex;
-  align-items: center;
-  flex: 1;
+.graph-doughnut > *{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 30px;
+}
+.graph-line{
+  height: 80%;
+  width: 75%;
+  background-color: white;
+  position: relative;
 }
 
 .control{
   /* background-color: rgb(90, 100, 100); */
   position: relative;
   width: 40%;
-  
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .Set_Module{
   display: flex;
-  height: 50%;
+  flex: 1;
 }
 .name{
   color: black;
@@ -379,21 +470,82 @@ export default {
   font-weight: bold;
   text-align: center;
   background-color: rgb(169, 201, 202);
-  /* width: 400px; */
+  height: 12%;
 }
-/* .name > tbody > tr > th{
-  margin: 0px 20px;
-} */
+
 .setting{
-  background-color: rgb(90, 100, 100);
-  width: 50%;
+  width: 54%;
+  height: 100%;
+  margin: 0% 1%;
 }
 .module{
-  background-color: rgb(90, 100, 100);
-  width: 50%;
+  background-color: #2D3333;
+  width: 46%;
+  height: 100%;
+  margin: 0% 1%;
 }
+
+.m_humid_on{
+  background-image: url("@/assets/m_water_on.png");
+  background-size: cover;
+  background-color: #5A6464;
+  width: 160px;
+  height: 160px;
+}
+.m_humid_off{
+  background-image: url("@/assets/m_water_off.png");
+  background-size: cover;
+  background-color: #000000;
+  width: 160px;
+  height: 160px;
+}
+.m_light_on{
+  background-image: url("@/assets/m_light_on.png");
+  background-size: cover;
+  background-color: #5A6464;
+  width: 160px;
+  height: 160px;
+}
+.m_light_off{
+  background-image: url("@/assets/m_light_off.png");
+  background-size: cover;
+  background-color: #000000;
+  width: 160px;
+  height: 160px;
+}
+.m_co2_on{
+  background-image: url("@/assets/m_co2_on.png");
+  background-size: cover;
+  background-color: #5A6464;
+  width: 160px;
+  height: 160px;
+}
+.m_co2_off{
+  background-image: url("@/assets/m_co2_off.png");
+  background-size: cover;
+  background-color: #000000;
+  width: 160px;
+  height: 160px;
+}
+.m_fan_on{
+  background-image: url("@/assets/m_wind_on.png");
+  background-size: cover;
+  background-color: #5A6464;
+  width: 160px;
+  height: 160px;
+}
+.m_fan_off{
+  background-image: url("@/assets/m_wind_off.png");
+  background-size: cover;
+  background-color: #000000;
+  width: 160px;
+  height: 160px;
+}
+
+
 .dashboard{
-  /* height: 50%; */
+  flex: 1;
+  margin: 0% 1%;
 }
 
 

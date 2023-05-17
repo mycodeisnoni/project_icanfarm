@@ -33,7 +33,7 @@
       <tbody>
         <tr>
           <th>이메일:</th>
-          <th><input type="text" v-model="userEmail"></th>
+          <th><input type="text" v-model="userEmail" @keyup.enter="emailCheck"></th>
           <th><button @click="emailCheck">중복확인</button></th>
         </tr>
         <tr>
@@ -69,13 +69,16 @@ export default {
     }
   },
   methods: {
+    // https://getbootstrap.com/docs/5.3/components/alerts/#examples
+    // 디자인 바꿔서
     emailCheck(){
-      api.admin.checkEmail(this.userEmail)
+      const User = this.userEmail;
+      api.admin.checkEmail(User)
       .then((res) => {
         alert(res.data);
         this.isEmailAvailable = true;
       }).catch((err) => {
-        alert(err.response.data);
+        alert("이미 사용중인 이메일입니다.");
         this.isEmailAvailable = false;
       });
     },
@@ -86,6 +89,7 @@ export default {
         name: this.userName,
       }).then((res) => {
         console.log(res);
+        alert("회원 저장에 성공하였습니다.");
       }).catch((err) => {
         console.error(err);
       });

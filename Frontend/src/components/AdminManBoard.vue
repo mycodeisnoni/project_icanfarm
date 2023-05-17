@@ -39,10 +39,11 @@
       <table class="table table-striped table-bordered" style="width: 70%;" v-if="showTable">
         <thead>
           <tr style="font-size: 32px; text-align: center;">
-            <th>id</th>
-            <th>rpiNickname</th>
-            <th>rpiSerial</th>
-            <th>joinDate</th>
+            <th>ID Number</th>
+            <th>Nickname</th>
+            <th>Serial Number</th>
+            <th>Date</th>
+            <th>Hub Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -51,15 +52,31 @@
             <td>{{ member.rpiNickname }}</td>
             <td>{{ member.rpiSerial }}</td>
             <!-- <td>{{ member.joinDate }}</td> -->
-            <td>
+            <td style="font-size: 24px;">
               {{ new Date(member.joinDate).getFullYear() }}년 
               {{ new Date(member.joinDate).getMonth() + 1 }}월 
-              {{ new Date(member.joinDate).getDate() }}일 
-              {{ new Date(member.joinDate).getHours() }}시
+              {{ new Date(member.joinDate).getDate() }}일
+            </td>
+            <td>
+              <button type="button" class="btn-close" style="width: 30px; height: 30px;" @click="openModal"></button>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="modal" tabindex="-1" v-if="isModalOpen">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <p>연결된 허브를 삭제하시겠습니까?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" @click="deleteModal">예</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeModal">아니오</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -76,6 +93,9 @@ export default {
       userEmail: "",
       members: [],
       showTable: false,
+      isModalOpen: false,
+      userRPiID: "",
+      userID: "",
     }
   },
   computed: {
@@ -94,9 +114,30 @@ export default {
   methods: {
     emailCheck(){
       api.admin.checkMember(this.userEmail).then((res) => {
-        console.log(res.data);
         this.members = res.data;
         this.showTable = true;
+        this.userID = res.data[0].id;
+        this.userRPiID = res.data[0].rpiID;
+        alert("회원 조회가 완료되었습니다.");
+      }).catch((err) => {
+        alert("등록된 허브가 없는 이메일입니다.");
+        console.log(err);
+      })
+    },
+    openModal(){
+      this.isModalOpen = true;
+    },
+    closeModal(){
+      this.isModalOpen = false;
+    },
+    deleteModal(){
+      this.isModalOpen = false;
+      api.admin.delMemberRPi({
+        member_id: this.userID,
+        rpi_id: this.userRPiID,
+      }).then((res) => {
+        alert("연결된 허브가 삭제되었습니다.");
+        console.log("hub delete");
       }).catch((err) => {
         console.log(err);
       })
@@ -183,5 +224,24 @@ export default {
 }
 ::placeholder {
   text-align: center;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
 }
 </style>

@@ -29,7 +29,9 @@ export const api = {
         getDefaultHub: (member_id) => {
             return request.get(`/api/hub/default/${member_id}`);
         },
-        
+        getUserID: (email) => {
+            return request.get(`/api/memberId/${email}`);
+        },
     },
     hub: {
         // 온도 target 설정 조회
@@ -72,6 +74,9 @@ export const api = {
         setLightSet: ({rpi_id, startTime, endTime}) => {
             return request.post(`/api/setting/light/${rpi_id}`, {startTime, endTime});
         },
+        getModuleInfo: (rpi_id) => {
+            return request.get(`/api/moduleInfo/${rpi_id}`);
+        },
 
         // 온도 정보 조회
         getTemp: (rpi_id) => {
@@ -110,8 +115,8 @@ export const api = {
             return request.get(`/admin/member/${email}`);
         },
         // RPi 등록
-        setMemberRPi: ({member_id, tempModule, lightModule}) => {
-            return request.post('/admin/member/rpi', {member_id, tempModule, lightModule});
+        setMemberRPi: ({memberId, tempModule, lightModule, humidModule, fanModule}) => {
+            return request.post('/admin/member/rpi', {memberId, tempModule, lightModule, humidModule, fanModule});
         },
         // RPi 제거
         delMemberRPi: ({member_id, rpi_id}) => {

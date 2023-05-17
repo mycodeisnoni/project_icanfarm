@@ -45,17 +45,22 @@ export default {
       console.log("버튼 눌림")
     },
     goToMonitor() {
+      const emailParts = this.userEmail.split("@");
+      const username = emailParts[0];
       api.member.login({
         email: this.userEmail,
         passwd: this.userPassword,
       })
       .then((res) => {
         console.log(res.data);
+        localStorage.setItem('username', username);
         localStorage.setItem('user', JSON.stringify(res.data));
         localStorage.setItem('startTime', new Date().getTime());
         this.$router.push({name : 'Monitor'});
       })
       .catch((error) => {
+        console.log(this.userEmail);
+        console.log(this.userPassword);
         console.error(error);
         if (error.response && error.response.status === 400) {
         alert("로그인에 실패했습니다.");

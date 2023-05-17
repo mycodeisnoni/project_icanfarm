@@ -30,12 +30,61 @@
     <router-view/>
 
     <div class="item2">
-      <tbody>
-        <th>시리얼: </th>
-        <th><input type="text" v-model="userSerial"></th>
-        <th><button @click="serialCheck">중복확인</button></th>
+      <tbody style="width: 80%;">
+        <th style="width: 15%; text-align: right;">회원:</th>
+        <th style="width: 50%;"><input type="text" placeholder="E-mail을 입력하세요." style="width: 100%; box-sizing: border-box;" v-model="userEmail" @keyup.enter="emailCheck"></th>
+        <th style="width: 15%;"><button @click="emailCheck">검색</button></th>
       </tbody>
-      <div style="font-size: 36px; width: 200px;"><button :disabled="!isSerialAvailable" @click="saveSeiral">저장</button></div>
+
+      <div v-if="showTable" style="width: 80%">
+        <div style="font-size: 32px; text-align: center">사용할 모듈을 선택하세요.</div>
+        <p></p>
+        <div style="display: flex; justify-content: center;">
+          <table class="table table-striped table-bordered" style="width: 70%;">
+            <thead>
+              <tr style="font-size: 32px; text-align: center;">
+                <th>User ID</th>
+                <th>WATER</th>
+                <th>LIGHT</th>
+                <th>CO2</th>
+                <th>WIND</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="font-size: 28px; text-align: center;">
+                <td>{{ userID }}</td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="waterValue" @click="water_toggle">
+                  </div>
+                </td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="lightValue" @click="light_toggle">
+                  </div>
+                </td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="co2Value" @click="co2_toggle">
+                  </div>
+                </td>
+                <td>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="windValue" @click="wind_toggle">
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary" @click="saveModule">SAVE</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
 
     </div>
 
@@ -48,25 +97,61 @@ import { api } from "@/utils/axios"
 export default {
   data() {
     return{
-      userSerial: "",
-      isSerialAvailable: false,
+      // userSerial: "",
+      // isSerialAvailable: false,
+      userEmail: "",
+      userID: "",
+      showTable: false,
+      isModalOpen: false,
+      waterValue: false,
+      lightValue: false,
+      co2Value: false,
+      windValue: false,
     }
   },
   methods: {
-    serialCheck(){
-      api.admin.checkSerial(this.userSerial).then((res) => {
-        alert(res.data);
-        this.isSerialAvailable = true;
+    emailCheck(){
+      api.member.getUserID(this.userEmail).then((res) => {
+        this.userID = res.data;
+        this.showTable = true;
+        alert("회원 조회가 완료되었습니다.");
       }).catch((err) => {
-        alert(err.response.data);
-        this.isSerialAvailable = false;
+        alert("등록되지 않은 이메일입니다.");
+        console.log(err);
       });
     },
-    saveSeiral(){
-      api.admin.setRPiInfo(this.userSerial).then((res) => {
-        alert(res.data);
+    water_toggle() {
+      this.waterValue = !this.waterValue;
+      console.log("water");
+      console.log(this.waterValue);
+    },
+    light_toggle(){
+      this.lightValue = !this.lightValue;
+      console.log("light");
+      console.log(this.lightValue);
+    },
+    co2_toggle(){
+      this.co2Value = !this.co2Value;
+      console.log("co2");
+      console.log(this.co2Value);
+    },
+    wind_toggle(){
+      this.windValue = !this.windValue;
+      console.log("wind");
+      console.log(this.windValue);
+    },
+    saveModule(){
+      api.admin.setMemberRPi({
+        memberId: this.userID,
+        tempModule: this.co2Value,
+        lightModule: this.lightValue,
+        humidModule: this.waterValue,
+        fanModule: this.windValue,
+      }).then((res) => {
+        alert("허브의 모듈 저장이 완료되었습니다.");
       }).catch((err) => {
-        alert(err.response.data);
+        console.log(err);
+        alert("사용 가능한 허브가 존재하지 않습니다.");
       });
     },
   },
@@ -148,6 +233,8 @@ export default {
   margin: 0 auto;
   width: 200px;
 }
-
+::placeholder {
+  text-align: center;
+}
 
 </style>
