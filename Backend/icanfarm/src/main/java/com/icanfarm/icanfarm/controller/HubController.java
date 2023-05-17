@@ -14,11 +14,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin
 public class HubController {
 
     private final HubService hubService;
     private final DataSensingService dataSensingService;
 
+    @GetMapping("/moduleInfo/{rpi_id}")
+    public ResponseEntity findModule(@PathVariable("rpi_id") Long id){
+        return ResponseEntity.ok().body(hubService.findModule(id));
+    }
     @GetMapping("/{sensor}/{rpi_id}")
     public ResponseEntity getDataInfo(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
         List<InfoValueDTO> values = hubService.getDataInfo(sensor, id);
@@ -61,4 +66,5 @@ public class HubController {
         hubService.setLightSetting(id, lightSettingDTO);
         return ResponseEntity.ok().body("조명 설정을 변경했습니다.");
     }
+
 }

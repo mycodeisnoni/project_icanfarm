@@ -1,6 +1,7 @@
 package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
+import com.icanfarm.icanfarm.dto.HubmoduleDTO;
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
@@ -74,7 +75,8 @@ public class HubService {
 
     public String getHubPasswd(Long hubId){
         Hub hub = getHub(hubId);
-        return hub.getMember().getPasswd();
+        //System.out.println("!!!!!!!!![getHubPasswd]PASSWORD : " + hub.getMember().getPasswd());
+        return hub.getMember().getRpiPasswd();
     }
 
     public SettingValueDTO getTargetValue(String name, Long hubId) {
@@ -124,5 +126,16 @@ public class HubService {
             hub.changeHumidRange(value);
         }
         hubRepository.save(hub);
+    }
+
+    public HubmoduleDTO findModule(Long id) {
+        Hub hub = getHub(id);
+
+        return HubmoduleDTO.builder()
+                .is_co2(hub.getIsCo2())
+                .is_fan(hub.getIsFan())
+                .is_humid(hub.getIsHumid())
+                .is_light(hub.getIsLight())
+                .build();
     }
 }

@@ -86,4 +86,17 @@ public class MemberService {
 
         return findHubOpt.get().getId();
     }
+
+    public Long getMemberId(String email)
+    {
+        Optional<Member> findMemberOpt = memberRepository.findByEmail(email);
+
+        if(findMemberOpt.isEmpty())
+            throw new UserNotExistException();
+
+        Member findMember = findMemberOpt.get();
+
+        return findMember.getId();
+    }
+
 }

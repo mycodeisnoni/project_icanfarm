@@ -18,6 +18,7 @@ public class Hub {
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
