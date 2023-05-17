@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent) :
         std::cerr << "Error: " << exc.what() << std::endl;
     }
 
-    // 포트연결 
+    // 시리얼 포트 연결 
     serial_port = new QSerialPort();
     serial_port->setPortName("/dev/pts/4");
     serial_port->setBaudRate(QSerialPort::Baud115200);
@@ -44,6 +44,10 @@ MainWindow::MainWindow(QWidget* parent) :
     serial_port->setParity(QSerialPort::NoParity);
     serial_port->setStopBits(QSerialPort::OneStop);
     serial_port->setFlowControl(QSerialPort::NoFlowControl);
+
+    // 버퍼 크기 설정
+    serial_port->setReadBufferSize(8192);
+
     if (serial_port->open(QIODevice::ReadWrite))
     {
         // Serial port is opened and ready for communication
@@ -59,15 +63,20 @@ MainWindow::MainWindow(QWidget* parent) :
     sendMqtt2Server("rpi/admin/power/" + CLIENT_ID, "hi");
 
     Thread* recvMqttFromServer_t = new Thread(this, &mqtt_client, NULL, 0); // 서버로부터 MQTT 수신 스레드
-    Thread* sensorDataProcess_t = new Thread(this, &mqtt_client, serial_port, 1); // 센서 데이터 수신 + 처리 스레드
+    Thread* tempSensorProcess_t = new Thread(this, &mqtt_client, serial_port, 1); // 센서 데이터 수신 + 처리 스레드
 
     recvMqttFromServer_t->start();
-    sensorDataProcess_t->start();
+    tempSensorProcess_t->start();
 
     // mqtt의 signal과 mainwindow의 slot 연결
     connect(&cb, SIGNAL(sendServerTemp(double)), this, SLOT(applyServerTemp(double)));
     connect(&cb, SIGNAL(sendServerHumid(double)), this, SLOT(applyServerHumid(double)));
     connect(&cb, SIGNAL(sendServerCo2(int)), this, SLOT(applyServerCo2(int)));
+
+    // thread의 signal과 mainwindow의 slot 연결
+    connect(tempSensorProcess_t, SIGNAL(sendTempData(double)), this, SLOT(updateTempData(double)));
+    //connect(humidSensorProcess_t, SIGNAL(sendHumidData(double)), this, SLOT(updateHumidData(double)));
+    //connect(co2SensorProcess_t, SIGNAL(sendCo2Data(int)), this, SLOT(updateCo2Data(int)));
 }
 
 // 소멸자
@@ -82,7 +91,7 @@ MainWindow::~MainWindow()
 
     // Delete dynamically allocated threads
     delete recvMqttFromServer_t;
-    delete sensorDataProcess_t;
+    delete tempSensorProcess_t;
 
     delete ui;
 }
@@ -215,6 +224,7 @@ void MainWindow::recvLogInResult(int flag)
     }
 }
 
+// 서버로 MQTT 전송
 void MainWindow::sendMqtt2Server(const std::string topic, const std::string msg)
 {
     mqtt::message_ptr pubmsg = mqtt::make_message(topic, msg);
@@ -234,7 +244,7 @@ void MainWindow::sendMqtt2Server(const std::string topic, const std::string msg)
 // mqtt.h로부터 받는 slot
 void MainWindow::applyServerTemp(double t) // mqtt.h에서 보내는 signal과 연결
 {
-    qDebug() << "server TEMP applied :  " << t;
+    qDebug() << "server TEMP applied : " << t;
     ui->temp_setting_text->setText(QString::number(t, 'g', 7));
     TEMP_SET = t;
 }
@@ -249,4 +259,21 @@ void MainWindow::applyServerCo2(int co) // mqtt.h에서 보내는 signal과 연�
     qDebug() << "server CO2 applied : " << co;
     ui->co2_setting_text->setText(QString::number(co));
     CO2_SET = co;
+}
+
+// thread.h로부터 받는 slot
+void MainWindow::updateTempData(double t)
+{
+    qDebug() << "received TEMP data : " << t;
+    ui->temp_recent_text->setText(QString::number(t, 'g', 7));
+}
+void MainWindow::updateHumidData(double h)
+{
+    qDebug() << "received HUMID data : " << h;
+    ui->humid_recent_text->setText(QString::number(h, 'g', 7));
+}
+void MainWindow::updateCo2Data(int co)
+{
+    qDebug() << "received CO2 data : " << co;
+    ui->co2_recent_text->setText(QString::number(co));
 }

@@ -33,7 +33,7 @@ private:
     mqtt::async_client mqtt_client;
     QSerialPort* serial_port;
     Thread* recvMqttFromServer_t;
-    Thread* sensorDataProcess_t;
+    Thread* tempSensorProcess_t;
 
 private slots:
     void upTemperature();
@@ -53,6 +53,9 @@ private slots:
     void applyServerTemp(double t); // mqtt.h에서 보내는 signal과 연결
     void applyServerHumid(double h); // mqtt.h에서 보내는 signal과 연결
     void applyServerCo2(int co); // mqtt.h에서 보내는 signal과 연결
+    void updateTempData(double t);
+    void updateHumidData(double h);
+    void updateCo2Data(int co);
 };
 
 #endif // MAINWINDOW_H
