@@ -5,7 +5,7 @@ Adafruit_SGP30 sgp;
 
 const int pin7 = 7;
 const int pin8 = 8;
-bool flag = false;
+bool flag = true;
 
 unsigned long pasttime =0;
 
@@ -28,9 +28,7 @@ void loop()
 {
   //Serial.println(sgp.eCO2);
   if(Serial.available()){
-    String x = Serial.readString();
-    //Serial.println(x);
-    if(x== "1"){
+    if(x == "1"){
       if(!flag){
         flag = true;
         digitalWrite(pin7, HIGH);
