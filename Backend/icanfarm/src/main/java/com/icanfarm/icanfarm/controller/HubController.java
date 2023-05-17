@@ -2,6 +2,7 @@ package com.icanfarm.icanfarm.controller;
 
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
+import com.icanfarm.icanfarm.dto.RPiRegisterDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
 import com.icanfarm.icanfarm.service.DataSensingService;
 import com.icanfarm.icanfarm.service.HubService;
@@ -19,6 +20,12 @@ public class HubController {
 
     private final HubService hubService;
     private final DataSensingService dataSensingService;
+
+    @GetMapping("/modules/{rpi_id}")
+    public ResponseEntity getUsedModules(@PathVariable("rpi_id") Long id){
+        RPiRegisterDTO rPiRegisterDTO = hubService.getUsedModules(id);
+        return ResponseEntity.ok().body(rPiRegisterDTO);
+    }
 
     @GetMapping("/moduleInfo/{rpi_id}")
     public ResponseEntity findModule(@PathVariable("rpi_id") Long id){
