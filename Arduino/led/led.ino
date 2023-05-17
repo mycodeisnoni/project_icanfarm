@@ -6,32 +6,31 @@ Adafruit_SGP30 sgp;
 const int pin7 = 7;
 const int pin8 = 8;
 bool flag = false;
-String x;
 
-unsigned long pasttime = 0;   // 10분마다의 전송을 위한 시간 기록 
+unsigned long pasttime =0;
 
 void setup()
 {
   Serial.begin(9600);
-
-  // sgp 센서 초기화
-  if (!sgp.begin()) {
-    Serial.println("SGP30 센서를 찾을 수 없습니다. 연결 상태를 확인하세요.");
-    while (1);
+  if(!sgp.begin()){
+    Serial.println("ERROR");
+    while(1);
   }
-
   pinMode(pin7, OUTPUT);
   pinMode(pin8, OUTPUT);
   digitalWrite(pin7, HIGH);
   digitalWrite(pin8, HIGH);
 
-  pasttime = millis();  
+  pasttime = millis();
 }
 
 void loop()
 {
-  if (Serial.available()) {
-    if (x == "1"){
+  //Serial.println(sgp.eCO2);
+  if(Serial.available()){
+    String x = Serial.readString();
+    //Serial.println(x);
+    if(x== "1"){
       if(!flag){
         flag = true;
         digitalWrite(pin7, HIGH);
@@ -47,15 +46,12 @@ void loop()
     }
   }
 
-  // 이산화탄소 센싱
-  if (!sgp.IAQmeasure()) {
-    Serial.println("IAQ 측정 실패");
+  if(!sgp.IAQmeasure()){
     return;
   }
 
-  if(millis() - pasttime >= 600000){  // 10분 마다 송신
-    Serial.println(sgp.eCO2); // 전송해야할 이산화탄소량 [ppm]
+  if(millis() - pasttime >= 10000){
+    Serial.println(sgp.eCO2);
     pasttime = millis();
   }
 }
-

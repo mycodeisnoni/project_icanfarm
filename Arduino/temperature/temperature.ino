@@ -1,79 +1,54 @@
 #include <SoftwareSerial.h>
 #include <DHT.h>
 
-#define DHTPIN 2        // DHT11 센서의 데이터 핀을 아두이노의 2번 핀에 연결
-#define DHTTYPE DHT11   // DHT11 센서를 사용
+#define DHTPIN 2
+#define DHTTYPE DHT11
 
 DHT dht(DHTPIN, DHTTYPE);
 
-bool flag = false;    // 현재 작동상태 기록
-float now_sensing = 0;        // 현재 센싱값
+bool flag = false;
+float now_sensing =0;
 
-int motor = 9;        // 릴레이모듈 : 팬 모터
+int motor = 9;
 
-int past = 0;       //  모터 작동을 위한 시간 기록
-int pasttime = 0;   // 10분마다의 전송을 위한 시간 기록 
+unsigned long past = 0;
+unsigned long pasttime =0;
 
-
-// 모터 on
-void run_motor()
-{
-  Serial.print(" motor start!! ");
-  digitalWrite(motor, HIGH); 
-}
-
-// 모터 off
-void stop_motor()
-{
-  Serial.print(" motor stop!! ");
-  digitalWrite(motor, LOW);
-}
-
-// 송신함수 
-void SendMessage()
-{
-  Serial.print(" SendMessage : ");
-}
- 
 void setup()
 {
   Serial.begin(9600);
-  pinMode(motor,OUTPUT);      // 모터핀설정
-  digitalWrite(motor, LOW);
+  pinMode(motor, OUTPUT);
   dht.begin();
   pasttime = millis();
+  digitalWrite(motor, HIGH);
 }
- 
+
 void loop()
 {
   float temperature = dht.readTemperature();
-  
-  // 온도 값이 유효한지 확인
-  if (!isnan(temperature)) {
+
+  if(!isnan(temperature)){
     now_sensing = temperature;
-    // // 시리얼 모니터에 온도 값 출력
-    // Serial.print("Temperature: ");
-    // Serial.print(now_sensing);
-    // Serial.println("°C");
-    // delay(1000);
   }
 
-
-  if (Serial.available()) { // 작동 명령 전달
-    if(!flag){    // 미작동중 상태라면
-      flag = true;    // 작동 플래그 처리
-      run_motor();
-      past  = millis();
+  if(Serial.available()){
+    if(!flag){
+      flag = true;
+      digitalWrite(motor, LOW);
+      past = millis();
     }
   }
 
-  if(millis() - past >= 60000){ // 60초 작동 후 종료
-    stop_motor();
-    flag = false;
+  if(millis() - past >= 5000){
+    if(flag){
+      digitalWrite(motor, HIGH);
+      flag = false;
+    }
   }
 
-  if(millis() - pasttime >= 600000){  // 10분 마다 송신
-    SendMessage();
+  if(millis() - pasttime >= 5000){
+    String str = String(temperature, 1);
+    Serial.println(str);
     pasttime = millis();
-  } 
+  }
 }
