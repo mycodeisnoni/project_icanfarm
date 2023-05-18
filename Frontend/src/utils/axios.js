@@ -119,7 +119,7 @@ export const api = {
         },
         // RPi 등록
         setMemberRPi: ({memberId, tempModule, lightModule, humidModule, fanModule}) => {
-            return request.post('/admin/member/rpi', {memberId, tempModule, lightModule, humidModule, fanModule});
+            return request.post('/admin/member/rpi', {memberId, co2Module, lightModule, humidModule, fanModule});
         },
         // RPi 제거
         delMemberRPi: ({member_id, rpi_id}) => {
