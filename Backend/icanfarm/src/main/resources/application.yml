@@ -67,7 +67,7 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: valid
     properties:
       hibernate:
         format_sql: true
