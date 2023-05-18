@@ -90,7 +90,10 @@ export const api = {
         getCO2: (rpi_id) => {
             return request.get(`/api/co2/${rpi_id}`);
         },
-        // 대시보드 로그 조회
+        // 한 번에 설정 변경
+        getAllSetting: ({rpi_id, tempTarget, tempRange, humidTarget, humidRange, startTime, endTime}) => {
+            return request.post(`/api/setting/all/${rpi_id}`, {tempTarget, tempRange, humidTarget, humidRange, startTime, endTime});
+        }
 
     },
     admin: {
