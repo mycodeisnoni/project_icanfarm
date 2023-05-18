@@ -30,6 +30,7 @@ public class MqttConfig {
     private static String MQTT_CLIENT_ID = MqttAsyncClient.generateClientId();
     private static String TOPIC_TEMP = "rpi/temp/#";
     private static String TOPIC_HUMID = "rpi/humid/#";
+    private static String TOPIC_CO2 = "rpi/co2/#";
     private static String TOPIC_ADMIN = "rpi/admin/#";
     private static String BROKER_URL = "tcp://k8a206.p.ssafy.io:3333";
     private static String[] URLS = {BROKER_URL};
@@ -60,7 +61,7 @@ public class MqttConfig {
     @Bean
     public MessageProducer inboundChannel() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MQTT_CLIENT_ID, TOPIC_TEMP, TOPIC_HUMID, TOPIC_ADMIN);
+                new MqttPahoMessageDrivenChannelAdapter(BROKER_URL, MQTT_CLIENT_ID, TOPIC_TEMP, TOPIC_HUMID, TOPIC_CO2, TOPIC_ADMIN);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
