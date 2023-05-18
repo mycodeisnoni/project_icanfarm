@@ -1,10 +1,7 @@
 package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
-import com.icanfarm.icanfarm.dto.HubmoduleDTO;
-import com.icanfarm.icanfarm.dto.InfoValueDTO;
-import com.icanfarm.icanfarm.dto.LightSettingDTO;
-import com.icanfarm.icanfarm.dto.SettingValueDTO;
+import com.icanfarm.icanfarm.dto.*;
 import com.icanfarm.icanfarm.entity.FarmSensor;
 import com.icanfarm.icanfarm.entity.Hub;
 import com.icanfarm.icanfarm.exception.HubNotExistException;
@@ -48,6 +45,15 @@ public class HubService {
         Hub hub = getHub(id);
 
         hub.changeLightSettings(lightSettingDTO.getStartTime(), lightSettingDTO.getEndTime());
+        hubRepository.save(hub);
+    }
+
+    public void setAllSetting(Long id, AllSettingDTO AllSettingDTO)
+    {
+        Hub hub = getHub(id);
+
+        hub.changeAllSettings(AllSettingDTO.getTempTarget(), AllSettingDTO.getTempRange(), AllSettingDTO.getHumidTarget(), AllSettingDTO.getHumidRange(),
+                AllSettingDTO.getStartTime(), AllSettingDTO.getEndTime());
         hubRepository.save(hub);
     }
 

@@ -1,5 +1,6 @@
 package com.icanfarm.icanfarm.controller;
 
+import com.icanfarm.icanfarm.dto.AllSettingDTO;
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
@@ -66,5 +67,12 @@ public class HubController {
         hubService.setLightSetting(id, lightSettingDTO);
         return ResponseEntity.ok().body("조명 설정을 변경했습니다.");
     }
+
+    @PostMapping("/setting/all/{rpi_id}")
+    public ResponseEntity setAllSetting(@PathVariable("rpi_id") Long id, @RequestBody AllSettingDTO AllSettingDTO){
+        hubService.setAllSetting(id, AllSettingDTO);
+        return ResponseEntity.ok().body("모든 설정을 변경했습니다.");
+    }
+
 
 }

@@ -1,7 +1,6 @@
 package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
-import com.icanfarm.icanfarm.controller.WebsocketController;
 import com.icanfarm.icanfarm.controller.websocketHandler;
 import com.icanfarm.icanfarm.entity.FarmSensor;
 import com.icanfarm.icanfarm.entity.Hub;
