@@ -143,7 +143,7 @@ export default {
     saveModule(){
       api.admin.setMemberRPi({
         memberId: this.userID,
-        tempModule: this.co2Value,
+        co2Module: this.co2Value,
         lightModule: this.lightValue,
         humidModule: this.waterValue,
         fanModule: this.windValue,
