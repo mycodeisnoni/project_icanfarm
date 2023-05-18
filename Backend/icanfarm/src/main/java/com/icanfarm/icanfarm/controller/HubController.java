@@ -71,6 +71,8 @@ public class HubController {
     @PostMapping("/setting/all/{rpi_id}")
     public ResponseEntity setAllSetting(@PathVariable("rpi_id") Long id, @RequestBody AllSettingDTO AllSettingDTO){
         hubService.setAllSetting(id, AllSettingDTO);
+        dataSensingService.changeSensorTarget("temp", id, AllSettingDTO.getTempTarget());
+        dataSensingService.changeSensorTarget("humid", id, AllSettingDTO.getHumidTarget());
         return ResponseEntity.ok().body("모든 설정을 변경했습니다.");
     }
 
