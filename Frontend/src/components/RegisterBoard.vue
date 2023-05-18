@@ -97,7 +97,7 @@ export default {
             this.TempLineChart.labels.shift();
             this.TempLineChart.datasets[0].data.shift();
           }
-          // this.$refs.templineChart.renderChart();
+          this.$refs.templineChart.renderChart();
         })
         .catch((err) => {
           console.log(err);
