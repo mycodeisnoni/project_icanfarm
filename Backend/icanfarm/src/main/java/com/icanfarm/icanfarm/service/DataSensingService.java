@@ -2,6 +2,7 @@ package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
 import com.icanfarm.icanfarm.controller.WebsocketController;
+import com.icanfarm.icanfarm.controller.websocketHandler;
 import com.icanfarm.icanfarm.entity.FarmSensor;
 import com.icanfarm.icanfarm.entity.Hub;
 import com.icanfarm.icanfarm.exception.HubNotExistException;
@@ -10,7 +11,9 @@ import com.icanfarm.icanfarm.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
@@ -21,7 +24,8 @@ public class DataSensingService {
     private final MqttConfig.OutboundGateway outboundGateway;
     private final HubService hubService;
     private final HubRepository hubRepository;
-    private final WebsocketController webSocket = new WebsocketController();
+    //private final WebsocketController webSocket = new WebsocketController();
+    private final websocketHandler ws = new websocketHandler();
 
     public void saveSensorData(Long hubId, String name, Double value) {
         FarmSensor farmSensor = FarmSensor.builder()
@@ -52,11 +56,26 @@ public class DataSensingService {
             // 비교
             if (value < setting - range) // 범위 넘으면 소켓 통신
             {
-                webSocket.broadcast(sensor_name + "가 너무 높습니다.");
+                String send_str = sensor_name + "가 너무 낮습니다.";
+                websocketHandler.CLIENTS.entrySet().forEach(arg -> {
+                    try {
+                        arg.getValue().sendMessage(new TextMessage(send_str));
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
             }
-            else if (value > setting + range)
-            {
-                webSocket.broadcast(sensor_name + "가 너무 낮습니다.");
+            else {
+                String send_str = sensor_name + "가 너무 높습니다.";
+                websocketHandler.CLIENTS.entrySet().forEach(arg -> {
+                    try {
+                        arg.getValue().sendMessage(new TextMessage(send_str));
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                });
             }
 
         }
@@ -64,7 +83,6 @@ public class DataSensingService {
         {
             e.getStackTrace();
         }
-
     }
 
     public void sendSensorData(Long hubId) {

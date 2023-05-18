@@ -1,14 +1,16 @@
 package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
-import com.icanfarm.icanfarm.dto.*;
+import com.icanfarm.icanfarm.dto.HubmoduleDTO;
+import com.icanfarm.icanfarm.dto.InfoValueDTO;
+import com.icanfarm.icanfarm.dto.LightSettingDTO;
+import com.icanfarm.icanfarm.dto.SettingValueDTO;
 import com.icanfarm.icanfarm.entity.FarmSensor;
 import com.icanfarm.icanfarm.entity.Hub;
 import com.icanfarm.icanfarm.exception.HubNotExistException;
 import com.icanfarm.icanfarm.repository.FarmSensorRepository;
 import com.icanfarm.icanfarm.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -106,7 +108,6 @@ public class HubService {
         return null;
     }
 
-    @Synchronized
     public void setSensorTarget(String name, Long hubId, Double value) {
         Hub hub = getHub(hubId);
         if(name.equals("temp")){
@@ -117,7 +118,6 @@ public class HubService {
         hubRepository.save(hub);
     }
 
-    @Synchronized
     public void setSensorRange(String name, Long hubId, Double value) {
         Hub hub = getHub(hubId);
         if(name.equals("temp")){
@@ -136,19 +136,6 @@ public class HubService {
                 .is_fan(hub.getIsFan())
                 .is_humid(hub.getIsHumid())
                 .is_light(hub.getIsLight())
-                .build();
-    }
-
-    public RPiRegisterDTO getUsedModules(Long id) {
-        Hub hub = getHub(id);
-
-        return RPiRegisterDTO.builder()
-                .memberId(hub.getMember().getId())
-                .tempModule(hub.getIsTemp())
-                .humidModule(hub.getIsHumid())
-                .lightModule(hub.getIsLight())
-                .fanModule(hub.getIsFan())
-                .co2Module(hub.getIsCo2())
                 .build();
     }
 }
