@@ -307,7 +307,7 @@ export default {
 
     window.addEventListener('resize', this.handleResize);
     this.fetchData();
-    setInterval(this.fetchData, 60*1000);
+    setInterval(this.fetchData, 15*1000);
   },
   beforeRouteLeave(to, from, next) {
   localStorage.setItem('startTime', this.startTime.getTime());
