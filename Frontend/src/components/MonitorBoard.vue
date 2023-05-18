@@ -25,11 +25,11 @@
           <div class="Set_label">Temperature</div>
           <div style="height: 100%; display: flex; justify-content: center;">
             <div class="graph-doughnut">
-              <DoughnutChart :data="TempDonutChart" :options="TempDonutChartOptions"/>
-              <div style="color: black; font-size: 32px; position: absolute; top: 85px; left: 140px;">°C</div>
+              <DoughnutChart ref="tempdoughnutChart" :data="TempDonutChart" :options="DonutChartOptions"/>
+              <div style="color: black; font-size: 32px; position: absolute; top: 83px; left: 105px;">{{ tempVal }}°C</div>
             </div>
             <div class="graph-line">
-              <LineChart :chart-data="TempLineChart" :chart-options="lineChartOptions" />
+              <LineChart ref="templineChart" :chart-data="TempLineChart" :chart-options="lineChartOptions" />
             </div>
           </div>
         </div>
@@ -37,8 +37,8 @@
           <div class="Set_label">Humidity</div>
           <div style="height: 100%; display: flex; justify-content: center;">
             <div class="graph-doughnut">
-              <DoughnutChart :data="HumidDonutChart" :options="donutChartOptions"/>
-              <div style="color: black; font-size: 32px; position: absolute; top: 85px; left: 140px;">%</div>
+              <DoughnutChart ref="humiddoughnutChart" :data="HumidDonutChart" :options="donutChartOptions"/>
+              <div style="color: black; font-size: 32px; position: absolute; top: 83px; left: 110px;">{{ humidVal }}%</div>
             </div>
             <div class="graph-line">
               <LineChart :chart-data="HumidLineChart" :chart-options="lineChartOptions" />
@@ -49,8 +49,8 @@
           <div class="Set_label">CO2</div>
           <div style="height: 100%; display: flex; justify-content: center;">
             <div class="graph-doughnut">
-              <DoughnutChart :data="CO2DonutChart" :options="donutChartOptions"/>
-              <div style="color: black; font-size: 24px; position: absolute; top: 85px; left: 140px;">ppm</div>
+              <DoughnutChart ref="co2doughnutChart" :data="CO2DonutChart" :options="donutChartOptions"/>
+              <div style="color: black; font-size: 24px; position: absolute; top: 86px; left: 105px;">{{ co2Val }}ppm</div>
             </div>
             <div class="graph-line">
               <LineChart :chart-data="CO2LineChart" :chart-options="lineChartOptions" />
@@ -63,7 +63,7 @@
         <div class="Set_Module">
           <div class="setting">
             <div class="name">Setting</div>
-            <div style="border: 1px black solid; height: 83%; font-size: 130%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgb(90, 100, 100); margin: 10px 0px;">
+            <div style="height: 83%; font-size: 130%; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: rgb(90, 100, 100); margin: 10px 0px;">
               <tbody style="border-spacing: 20px;">
                 <tr style="text-align: center;">
                   <th>SENSOR</th>
@@ -106,21 +106,23 @@
         </div>
         <div class="dashboard">
           <div class="name">Notification</div>
-          <div style="background-color: white">
-            <thead>
-                <tr>
-                  <th>Timeline</th>
-                  <th>LOG</th>
-                  <th>Message</th>
+          <div style="background-color: white; height: 86%;">
+            <table style="width: 100%;">
+              <thead>
+                <tr style="font-size: 30px; text-align: center;">
+                  <th style="width: 30%;">Timeline</th>
+                  <th style="width: 20%;">LOG</th>
+                  <th style="width: 50%;">Message</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th>Date</th>
-                  <th>log</th>
-                  <th>message</th>
+                <tr style="font-size: 24px; text-align: center;" v-for="(message, index) in messages.slice().reverse()" :key="index">
+                  <td style="width: 30%;">{{ getMessageTime(message.date) }}</td>
+                  <td style="width: 20%; color: red;">{{ message.log }}</td>
+                  <td style="width: 50%;">{{ message.text }}</td>
                 </tr>
               </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -166,9 +168,13 @@ export default {
       uptime: 0,
       intervalId: null,
       isModalOpen: false,
+      messages: [],
       temp_table: null,
       humid_table: null,
       co2_table: null,
+      tempVal: 0,
+      humidVal: 0,
+      co2Val: 0,
       tempTarget: "",
       tempRange: "",
       humidTarget: "",
@@ -283,12 +289,17 @@ export default {
     });
     await api.hub.getModuleInfo(this.default_hub)
     .then((res) => {
+      console.log(this.default_hub);
+      console.log(res);
       this.humidModule = res.data.isHumid;
       this.lightModule = res.data.isLight;
       this.co2Module = res.data.isCo2;
       this.fanModule = res.data.isFan;
+      console.log(humidModule);
+      console.log(lightModule);
+      console.log(co2Module);
+      console.log(fanModule);
     }).catch((err) => {
-      console.log(err);
     })
 
     this.getSettings();
@@ -297,6 +308,19 @@ export default {
       this.startTime = new Date(parseInt(startTime));
       this.intervalId = setInterval(this.updateUptime, 1000);
     }
+
+    this.socket = new WebSocket("ws://k8a206.p.ssafy.io:8090/api/socket");
+    this.socket.onopen = () => {
+      console.log("WEB SOCKET CONNECTED");
+    };
+    this.socket.onmessage = ({ data }) => {
+      console.log(data);
+      this.addMessage(data);
+    }
+
+    window.addEventListener('resize', this.handleResize);
+    this.fetchData();
+    setInterval(this.fetchData, 2000);
   },
   beforeRouteLeave(to, from, next) {
   localStorage.setItem('startTime', this.startTime.getTime());
@@ -307,6 +331,62 @@ export default {
       localStorage.removeItem('user');
       localStorage.removeItem('startTime');
       localStorage.removeItem('username');
+    },
+    addMessage(data){
+      const message = {
+        date: new Date(),
+        log: "Warning",
+        text: data,
+      };
+      this.messages.push(message);
+    },
+    getMessageTime(data){
+      const options = {hour: "numeric", minute: "numeric"};
+      return data.toLocaleString(undefined, options);
+    },
+    fetchData() {
+      api.hub.getTemp(this.default_hub)
+        .then((res) => {
+          const newItem = res.data.slice(-1)[0];
+          if(this.tempVal != parseInt(newItem.value)){
+            this.tempVal = parseInt(newItem.value);
+            console.log(newItem.value);
+            this.$set(this.TempDonutChart.datasets[0].data, 0, newItem.value);
+            this.$set(this.TempDonutChart.datasets[0].data, 1, 50 - newItem.value);
+            this.$refs.tempdoughnutChart.renderChart();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      api.hub.getHumid(this.default_hub)
+        .then((res) => {
+          const newItem = res.data.slice(-1)[0];
+          if(this.humidVal != parseInt(newItem.value)){
+            this.humidVal = parseInt(newItem.value);
+            console.log(newItem.value);
+            this.$set(this.HumidDonutChart.datasets[0].data, 0, newItem.value);
+            this.$set(this.HumidDonutChart.datasets[0].data, 1, 50 - newItem.value);
+            this.$refs.humiddoughnutChart.renderChart();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      api.hub.getCO2(this.default_hub)
+        .then((res) => {
+          const newItem = res.data.slice(-1)[0];
+          if(this.co2Val != parseInt(newItem.value)){
+            this.co2Val = parseInt(newItem.value);
+            console.log(newItem.value);
+            this.$set(this.CO2DonutChart.datasets[0].data, 0, newItem.value);
+            this.$set(this.CO2DonutChart.datasets[0].data, 1, 50 - newItem.value);
+            this.$refs.co2doughnutChart.renderChart();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     updateUptime(){
       const now = new Date();
@@ -334,29 +414,27 @@ export default {
       };
 
     },
-    async openModal() {
+    openModal() {
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, "0");
       const day = String(now.getDate()).padStart(2, "0");
 
       const formatTime = (time) => String(time).padStart(2, "0");
-      try{
-        await Promise.all([
-          api.hub.setTempTarget({rpi_id: this.default_hub, value: this.tempTarget}).then((res) => console.log("1")),
-          api.hub.setTempRange({rpi_id: this.default_hub, value: this.tempRange}).then((res) => console.log("2")),
-          api.hub.setHumidTarget({rpi_id: this.default_hub, value: this.humidTarget}).then((res) => console.log("3")),
-          api.hub.setHumidRange({rpi_id: this.default_hub, value: this.humidRange}).then((res) => console.log("4")),
-          api.hub.setLightSet({
-            rpi_id: this.default_hub, 
-            startTime: `${yenpmar}-${month}-${day}T${formatTime(this.startTimeHour)}:00:00`,
-            endTime: `${year}-${month}-${day}T${formatTime(this.endTimeHour)}:00:00`},)
-        ]);
-        console.log("모든 API 콜 성공")
+      api.hub.getAllSetting({
+        rpi_id: this.default_hub,
+        tempTarget: this.tempTarget,
+        tempRange: this.tempRange,
+        humidTarget: this.humidTarget,
+        humidRange: this.humidRange,
+        startTime: `${year}-${month}-${day}T${formatTime(this.startTimeHour)}:00:00`,
+        endTime: `${year}-${month}-${day}T${formatTime(this.endTimeHour)}:00:00`,
+      }).then((res) => {
+        console.log("모든 API 콜 성공");
         this.isModalOpen = true;
-      } catch (err) {
-        console.log("ERROR: ", err);
-      };
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     closeModal() {
       this.isModalOpen = false;
