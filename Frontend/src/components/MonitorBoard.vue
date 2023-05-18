@@ -41,7 +41,7 @@
               <div style="color: black; font-size: 32px; position: absolute; top: 83px; left: 110px;">{{ humidVal }}%</div>
             </div>
             <div class="graph-line">
-              <LineChart :chart-data="HumidLineChart" :chart-options="lineChartOptions" />
+              <LineChart ref="humidlineChart" :chart-data="HumidLineChart" :chart-options="lineChartOptions" />
             </div>
           </div>
         </div>
@@ -50,10 +50,10 @@
           <div style="height: 100%; display: flex; justify-content: center;">
             <div class="graph-doughnut">
               <DoughnutChart ref="co2doughnutChart" :data="CO2DonutChart" :options="donutChartOptions"/>
-              <div style="color: black; font-size: 24px; position: absolute; top: 86px; left: 105px;">{{ co2Val }}ppm</div>
+              <div style="color: black; font-size: 24px; position: absolute; top: 89px; left: 105px;">{{ co2Val }}ppm</div>
             </div>
             <div class="graph-line">
-              <LineChart :chart-data="CO2LineChart" :chart-options="lineChartOptions" />
+              <LineChart ref="co2lineChart" :chart-data="CO2LineChart" :chart-options="lineChartOptions" />
             </div>
           </div>
         </div>
@@ -191,31 +191,18 @@ export default {
         labels: ['Red', 'Gray'],
         datasets: [
           {
-            data: [35, 50-35],
+            data: [25, 25],
             backgroundColor: ['#FF6384', '#D9D9D9'],
             borderWidth: 1,
           },
         ],
       },
-      TempDonutChartOptions: {
-        responsive: false,
-        cutout: 90,
-        plugins: {
-          legend: {
-            display: false,
-          },
-          title: {
-            display: true,
-            text: 'temp',
-          }
-        },
-      },
       TempLineChart: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [''],
         datasets: [
           {
             borderColor: 'rgb(255, 99, 132)',
-            data: [0, 10, 5, 2, 20, 30, 45],
+            data: [0],
           },
         ],
       },
@@ -223,19 +210,19 @@ export default {
         labels: ['Yellow', 'Gray'],
         datasets: [
           {
-            data: [30, 30],
+            data: [25, 25],
             backgroundColor: ['#F5D800', '#D9D9D9'],
             borderWidth: 1,
           },
         ],
       },
       HumidLineChart: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [''],
         datasets: [
           {
             label: 'My First dataset',
             borderColor: 'rgb(255, 99, 132)',
-            data: [0, 10, 5, 2, 20, 30, 45],
+            data: [0],
           },
         ],
       },
@@ -243,19 +230,19 @@ export default {
         labels: ['Green', 'Gray'],
         datasets: [
           {
-            data: [12, 19],
+            data: [25, 25],
             backgroundColor: ['#4BAE7A', '#D9D9D9'],
             borderWidth: 1,
           },
         ],
       },
       CO2LineChart: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: [''],
         datasets: [
           {
             label: 'My First dataset',
             borderColor: 'rgb(255, 99, 132)',
-            data: [0, 10, 5, 2, 20, 30, 45],
+            data: [0],
           },
         ],
       },
@@ -306,7 +293,7 @@ export default {
     const startTime = localStorage.getItem('startTime');
     if(startTime){
       this.startTime = new Date(parseInt(startTime));
-      this.intervalId = setInterval(this.updateUptime, 1000);
+      this.intervalId = setInterval(this.updateUptime, 60*1000);
     }
 
     this.socket = new WebSocket("ws://k8a206.p.ssafy.io:8090/api/socket");
@@ -347,7 +334,8 @@ export default {
     fetchData() {
       api.hub.getTemp(this.default_hub)
         .then((res) => {
-          const newItem = res.data.slice(-1)[0];
+          // const newItem = res.data.slice(-1)[0];
+          const newItem = res.data[0];
           if(this.tempVal != parseInt(newItem.value)){
             this.tempVal = parseInt(newItem.value);
             console.log(newItem.value);
@@ -355,13 +343,28 @@ export default {
             this.$set(this.TempDonutChart.datasets[0].data, 1, 50 - newItem.value);
             this.$refs.tempdoughnutChart.renderChart();
           }
+          const date = new Date(newItem.date);
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const label = `${hours}:${minutes}`;
+
+          this.TempLineChart.labels.push(label);
+          this.TempLineChart.datasets[0].data.push(newItem.value);
+
+          if(this.TempLineChart.labels.length>10){
+            this.TempLineChart.labels.shift();
+            this.TempLineChart.datasets[0].data.shift();
+          }
+          this.$refs.templineChart.renderChart();
+
         })
         .catch((err) => {
           console.log(err);
         });
       api.hub.getHumid(this.default_hub)
         .then((res) => {
-          const newItem = res.data.slice(-1)[0];
+          // const newItem = res.data.slice(-1)[0];
+          const newItem = res.data[0];
           if(this.humidVal != parseInt(newItem.value)){
             this.humidVal = parseInt(newItem.value);
             console.log(newItem.value);
@@ -369,13 +372,27 @@ export default {
             this.$set(this.HumidDonutChart.datasets[0].data, 1, 50 - newItem.value);
             this.$refs.humiddoughnutChart.renderChart();
           }
+          const date = new Date(newItem.date);
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const label = `${hours}:${minutes}`;
+
+          this.HumidLineChart.labels.push(label);
+          this.HumidLineChart.datasets[0].data.push(newItem.value);
+
+          if(this.HumidLineChart.labels.length>10){
+            this.HumidLineChart.labels.shift();
+            this.HumidLineChart.datasets[0].data.shift();
+          }
+          this.$refs.humidlineChart.renderChart();
         })
         .catch((err) => {
           console.log(err);
         });
       api.hub.getCO2(this.default_hub)
         .then((res) => {
-          const newItem = res.data.slice(-1)[0];
+          // const newItem = res.data.slice(-1)[0];
+          const newItem = res.data[0];
           if(this.co2Val != parseInt(newItem.value)){
             this.co2Val = parseInt(newItem.value);
             console.log(newItem.value);
@@ -383,6 +400,19 @@ export default {
             this.$set(this.CO2DonutChart.datasets[0].data, 1, 50 - newItem.value);
             this.$refs.co2doughnutChart.renderChart();
           }
+          const date = new Date(newItem.date);
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const label = `${hours}:${minutes}`;
+
+          this.CO2LineChart.labels.push(label);
+          this.CO2LineChart.datasets[0].data.push(newItem.value);
+
+          if(this.CO2LineChart.labels.length>10){
+            this.CO2LineChart.labels.shift();
+            this.CO2LineChart.datasets[0].data.shift();
+          }
+          this.$refs.co2lineChart.renderChart();
         })
         .catch((err) => {
           console.log(err);
