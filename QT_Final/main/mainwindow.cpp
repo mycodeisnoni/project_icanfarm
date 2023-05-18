@@ -17,6 +17,14 @@ MainWindow::MainWindow(QWidget* parent) :
     mqtt_client(MQTT_SERVER_ADDRESS, CLIENT_ID)
 {
     ui->setupUi(this);
+    ui->pushButton->setVisible(false);
+    ui->pushButton_2->setVisible(false);
+    ui->pushButton_3->setVisible(false);
+    ui->pushButton_4->setVisible(false);
+
+    ui->show_water->setStyleSheet("background-color: rgb(255, 255, 0);");
+    ui->show_wind->setStyleSheet("background-color: rgb(255, 255, 0);");
+    ui->show_sun->setStyleSheet("background-color: rgb(255, 255, 0);");
 
     // Set up MQTT client options
     mqtt::connect_options connOpts;
