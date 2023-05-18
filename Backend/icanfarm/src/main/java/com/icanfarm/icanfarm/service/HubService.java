@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,9 +64,7 @@ public class HubService {
 
         List<FarmSensor> sensors = farmSensorRepository.findFarmSensorsByNameAndHubId(sensor, id, start, end);
         return sensors.stream()
-                .filter(
-                        s -> s.getDate().getMinute() == 0 || s.getDate().getMinute() == 30
-                )
+                .sorted(Comparator.comparing(FarmSensor::getDate).reversed())
                 .map(
                         s -> InfoValueDTO.builder()
                                 .date(s.getDate())
