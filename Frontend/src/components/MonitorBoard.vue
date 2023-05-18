@@ -293,7 +293,7 @@ export default {
     const startTime = localStorage.getItem('startTime');
     if(startTime){
       this.startTime = new Date(parseInt(startTime));
-      this.intervalId = setInterval(this.updateUptime, 60*1000);
+      this.intervalId = setInterval(this.updateUptime, 1000);
     }
 
     this.socket = new WebSocket("ws://k8a206.p.ssafy.io:8090/api/socket");
@@ -307,7 +307,7 @@ export default {
 
     window.addEventListener('resize', this.handleResize);
     this.fetchData();
-    setInterval(this.fetchData, 2000);
+    setInterval(this.fetchData, 60*1000);
   },
   beforeRouteLeave(to, from, next) {
   localStorage.setItem('startTime', this.startTime.getTime());
