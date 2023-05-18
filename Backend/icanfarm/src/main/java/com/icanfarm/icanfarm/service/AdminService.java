@@ -77,6 +77,7 @@ public class AdminService {
                         .rpiNickname(h.getNickname())
                         .rpiSerial(h.getSerial())
                         .joinDate(h.getJoinDate())
+                        .rpiID(h.getId())
                         .build()
         ).collect(Collectors.toList());
     }

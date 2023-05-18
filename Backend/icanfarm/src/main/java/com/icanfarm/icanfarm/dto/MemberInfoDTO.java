@@ -16,4 +16,6 @@ public class MemberInfoDTO {
     private String rpiSerial;
 
     private LocalDateTime joinDate;
+
+    private Long rpiID;
 }

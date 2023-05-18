@@ -1,5 +1,6 @@
 package com.icanfarm.icanfarm.controller;
 
+import com.icanfarm.icanfarm.dto.AllSettingDTO;
 import com.icanfarm.icanfarm.dto.InfoValueDTO;
 import com.icanfarm.icanfarm.dto.LightSettingDTO;
 import com.icanfarm.icanfarm.dto.SettingValueDTO;
@@ -14,11 +15,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin
 public class HubController {
 
     private final HubService hubService;
     private final DataSensingService dataSensingService;
 
+    @GetMapping("/moduleInfo/{rpi_id}")
+    public ResponseEntity findModule(@PathVariable("rpi_id") Long id){
+        return ResponseEntity.ok().body(hubService.findModule(id));
+    }
     @GetMapping("/{sensor}/{rpi_id}")
     public ResponseEntity getDataInfo(@PathVariable("sensor")String sensor, @PathVariable("rpi_id") Long id){
         List<InfoValueDTO> values = hubService.getDataInfo(sensor, id);
@@ -61,4 +67,12 @@ public class HubController {
         hubService.setLightSetting(id, lightSettingDTO);
         return ResponseEntity.ok().body("조명 설정을 변경했습니다.");
     }
+
+    @PostMapping("/setting/all/{rpi_id}")
+    public ResponseEntity setAllSetting(@PathVariable("rpi_id") Long id, @RequestBody AllSettingDTO AllSettingDTO){
+        hubService.setAllSetting(id, AllSettingDTO);
+        return ResponseEntity.ok().body("모든 설정을 변경했습니다.");
+    }
+
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j
+@CrossOrigin
 public class MemberController {
 
     private final MemberService memberService;
@@ -53,5 +54,11 @@ public class MemberController {
     public ResponseEntity getDefaultHub(@PathVariable("member_id")Long id){
         Long hubId = memberService.getDefaultHub(id);
         return ResponseEntity.ok().body(hubId);
+    }
+
+    @GetMapping("/memberId/{email}")
+    public ResponseEntity getMemberId(@PathVariable("email")String email){
+        Long id = memberService.getMemberId(email);
+        return ResponseEntity.ok().body(id);
     }
 }

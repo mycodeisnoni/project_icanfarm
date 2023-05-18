@@ -28,9 +28,9 @@ public class MqttConfig {
     private static String MQTT_PASSWORD = "1234";
 
     private static String MQTT_CLIENT_ID = MqttAsyncClient.generateClientId();
-    private static String TOPIC_TEMP = "temp/#";
-    private static String TOPIC_HUMID = "humid/#";
-    private static String TOPIC_ADMIN = "admin/power/+";
+    private static String TOPIC_TEMP = "rpi/temp/#";
+    private static String TOPIC_HUMID = "rpi/humid/#";
+    private static String TOPIC_ADMIN = "rpi/admin/#";
     private static String BROKER_URL = "tcp://k8a206.p.ssafy.io:3333";
     private static String[] URLS = {BROKER_URL};
 
@@ -73,22 +73,23 @@ public class MqttConfig {
     public MessageHandler inboundMessageHandler() {
         return message -> {
             String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+
             System.out.println("!!!!! Topic:" + topic);
             System.out.println("!!!!! Payload" + message.getPayload());
             String[] subTopics = topic.split("/");
-            if(subTopics[0].equals("admin")){
-                if(subTopics[1].equals("power")){
-                    dataSensingService.sendSensorData(Long.parseLong(subTopics[2]));
+            if(subTopics[1].equals("admin")){
+                if(subTopics[2].equals("power")){
+                    dataSensingService.sendSensorData(Long.parseLong(subTopics[3]));
                 }else{
-                    dataSensingService.sendHubPasswod(Long.parseLong(subTopics[2]));
+                    dataSensingService.sendHubPasswod(Long.parseLong(subTopics[3]));
                 }
             }else{
-                if(subTopics[1].equals("data")){
-                    dataSensingService.saveSensorData(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
-                }else if(subTopics[1].equals("target")){
-                    dataSensingService.saveSensorTargetValue(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
-                }else if(subTopics[1].equals("range")){
-                    dataSensingService.saveSensorRnageValue(Long.parseLong(subTopics[2]), subTopics[0], (Double) message.getPayload());
+                if(subTopics[2].equals("data")){
+                    dataSensingService.saveSensorData(Long.parseLong(subTopics[3]), subTopics[1], Double.parseDouble((String)message.getPayload()));
+                }else if(subTopics[2].equals("set")){
+                    dataSensingService.saveSensorTargetValue(Long.parseLong(subTopics[3]), subTopics[1], Double.parseDouble((String)message.getPayload()));
+                }else if(subTopics[2].equals("range")){
+                    dataSensingService.saveSensorRangeValue(Long.parseLong(subTopics[3]), subTopics[1], Double.parseDouble((String)message.getPayload()));
                 }
             }
         };

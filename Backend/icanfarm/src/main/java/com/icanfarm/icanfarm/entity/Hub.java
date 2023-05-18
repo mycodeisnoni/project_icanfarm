@@ -18,6 +18,7 @@ public class Hub {
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
@@ -147,6 +148,16 @@ public class Hub {
         this.lightTurnOffTime = endTime;
     }
 
+    public void changeAllSettings(Double t_T, Double t_R, Double h_T, Double h_R, LocalDateTime st, LocalDateTime et)
+    {
+        this.tempSetting = t_T;
+        this.tempRate = t_R;
+        this.humidSetting = h_T;
+        this.humidRate = h_R;
+        this.lightTurnOnTime = st;
+        this.lightTurnOffTime = et;
+    }
+
     public String getInitialInfoJson() throws Exception{
         return StartingDataDTO.builder()
                 .tempSettingValue(this.tempSetting)
@@ -172,4 +183,6 @@ public class Hub {
     public void changeHumidRange(Double value) {
         this.humidRate = value;
     }
+
+
 }

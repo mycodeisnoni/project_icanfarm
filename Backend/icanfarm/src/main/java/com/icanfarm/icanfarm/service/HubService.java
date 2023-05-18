@@ -1,9 +1,7 @@
 package com.icanfarm.icanfarm.service;
 
 import com.icanfarm.icanfarm.config.MqttConfig;
-import com.icanfarm.icanfarm.dto.InfoValueDTO;
-import com.icanfarm.icanfarm.dto.LightSettingDTO;
-import com.icanfarm.icanfarm.dto.SettingValueDTO;
+import com.icanfarm.icanfarm.dto.*;
 import com.icanfarm.icanfarm.entity.FarmSensor;
 import com.icanfarm.icanfarm.entity.Hub;
 import com.icanfarm.icanfarm.exception.HubNotExistException;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,15 +49,22 @@ public class HubService {
         hubRepository.save(hub);
     }
 
+    public void setAllSetting(Long id, AllSettingDTO AllSettingDTO)
+    {
+        Hub hub = getHub(id);
+
+        hub.changeAllSettings(AllSettingDTO.getTempTarget(), AllSettingDTO.getTempRange(), AllSettingDTO.getHumidTarget(), AllSettingDTO.getHumidRange(),
+                AllSettingDTO.getStartTime(), AllSettingDTO.getEndTime());
+        hubRepository.save(hub);
+    }
+
     public List<InfoValueDTO> getDataInfo(String sensor, Long id) {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minus(7, ChronoUnit.DAYS);
 
         List<FarmSensor> sensors = farmSensorRepository.findFarmSensorsByNameAndHubId(sensor, id, start, end);
         return sensors.stream()
-                .filter(
-                        s -> s.getDate().getMinute() == 0 || s.getDate().getMinute() == 30
-                )
+                .sorted(Comparator.comparing(FarmSensor::getDate).reversed())
                 .map(
                         s -> InfoValueDTO.builder()
                                 .date(s.getDate())
@@ -74,7 +80,8 @@ public class HubService {
 
     public String getHubPasswd(Long hubId){
         Hub hub = getHub(hubId);
-        return hub.getMember().getPasswd();
+        //System.out.println("!!!!!!!!![getHubPasswd]PASSWORD : " + hub.getMember().getPasswd());
+        return hub.getMember().getRpiPasswd();
     }
 
     public SettingValueDTO getTargetValue(String name, Long hubId) {
@@ -124,5 +131,16 @@ public class HubService {
             hub.changeHumidRange(value);
         }
         hubRepository.save(hub);
+    }
+
+    public HubmoduleDTO findModule(Long id) {
+        Hub hub = getHub(id);
+
+        return HubmoduleDTO.builder()
+                .is_co2(hub.getIsCo2())
+                .is_fan(hub.getIsFan())
+                .is_humid(hub.getIsHumid())
+                .is_light(hub.getIsLight())
+                .build();
     }
 }

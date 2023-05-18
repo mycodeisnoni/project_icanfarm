@@ -48,4 +48,6 @@ public class Member {
     public void changeRPiPasswd(String pw){
         this.rpiPasswd = pw;
     }
+
+    public String getRpiPasswd() { return this.rpiPasswd; }
 }

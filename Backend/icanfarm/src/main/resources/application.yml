@@ -66,6 +66,10 @@ spring:
     password: a206
   # JPA
   jpa:
+    # hibernate 오류
+    #database: mariadb
+    #database-platform: org.hibernate.dialect.MariaDBDialect
+
     hibernate:
       ddl-auto: valid
     properties:
