@@ -5,29 +5,29 @@ Adafruit_SGP30 sgp;
 
 const int pin7 = 7;
 const int pin8 = 8;
-bool flag = true;
+bool flag = false;
 
 unsigned long pasttime =0;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   if(!sgp.begin()){
     Serial.println("ERROR");
     while(1);
   }
   pinMode(pin7, OUTPUT);
   pinMode(pin8, OUTPUT);
-  digitalWrite(pin7, HIGH);
-  digitalWrite(pin8, HIGH);
+  digitalWrite(pin7, LOW);
+  digitalWrite(pin8, LOW);
 
   pasttime = millis();
 }
 
 void loop()
 {
-  //Serial.println(sgp.eCO2);
   if(Serial.available()){
+    String x = Serial.readString();
     if(x == "1"){
       if(!flag){
         flag = true;
@@ -49,7 +49,11 @@ void loop()
   }
 
   if(millis() - pasttime >= 10000){
-    Serial.println(sgp.eCO2);
+    String str = "@";
+    str += String(sgp.eCO2);
+    str += "#";
+    Serial.flush();
+          Serial.print(str);
     pasttime = millis();
   }
 }

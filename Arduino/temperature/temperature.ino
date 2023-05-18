@@ -1,3 +1,4 @@
+
 #include <SoftwareSerial.h>
 #include <DHT.h>
 
@@ -16,7 +17,7 @@ unsigned long pasttime =0;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(motor, OUTPUT);
   dht.begin();
   pasttime = millis();
@@ -26,13 +27,13 @@ void setup()
 void loop()
 {
   float temperature = dht.readTemperature();
-
   if(!isnan(temperature)){
     now_sensing = temperature;
   }
 
   if(Serial.available()){
     if(!flag){
+      Serial.readString();
       flag = true;
       digitalWrite(motor, LOW);
       past = millis();
@@ -41,14 +42,18 @@ void loop()
 
   if(millis() - past >= 5000){
     if(flag){
+      Serial.println("sop");
       digitalWrite(motor, HIGH);
       flag = false;
     }
   }
 
-  if(millis() - pasttime >= 5000){
-    String str = String(temperature, 1);
-    Serial.println(str);
+  if(millis() - pasttime >= 10000){
+    String srt = "@";
+    srt += String(temperature, 1);
+    srt += "#";
+    Serial.flush();
+    Serial.print(srt);
     pasttime = millis();
   }
 }
