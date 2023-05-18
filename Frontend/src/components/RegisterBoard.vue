@@ -1,13 +1,11 @@
 <template>
   <div class="container">
+    
     <div class="item">
       <div class="chart-wrapper">
-        <div class="graph_2">
-          <DoughnutChart :data="TempDonutChart" :options="donutChartOptions"/>
-        </div>
-        <div class="line_g">
-          <LineChart :chart-data="TempLineChart" :chart-options="lineChartOptions" />
-        </div>
+      </div>
+      <div class="graph-line">
+        <LineChart ref="templineChart" :chart-data="TempLineChart" :chart-options="lineChartOptions" />
       </div>
 
     </div>
@@ -28,18 +26,20 @@ export default {
   },
   data() {
     return {
+      default_hub: null,
+      tempVal: 0,
       TempDonutChart: {
         labels: ['Red', 'Gray'],
         datasets: [
           {
-            data: [35, 50-35],
+            data: [0, 0],
             backgroundColor: ['#FF6384', '#D9D9D9'],
             borderWidth: 1,
           },
         ],
       },
       TempLineChart: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: ['', '', '', '', '', '', '', '', '', ''],
         datasets: [
           {
             borderColor: 'rgb(255, 99, 132)',
@@ -64,6 +64,46 @@ export default {
       },
     };
   },
+  async mounted() {
+    this.member_id = localStorage.getItem('user');
+    await api.member.getDefaultHub(this.member_id)
+      .then((res) => {
+        this.default_hub = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+      
+    this.fetchData();
+    setInterval(this.fetchData, 2000);
+  },
+  methods: {
+    fetchData() {
+      api.hub.getCO2(this.default_hub)
+        .then((res) => {
+          const newItem = res.data.slice(-1)[0];
+          const date = new Date(newItem.date);
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const label = `${hours}:${minutes}`;
+
+          console.log(newItem.value);
+
+          this.TempLineChart.labels.push(label);
+          this.TempLineChart.datasets[0].data.push(newItem.value);
+
+          if(this.TempLineChart.labels.length>10){
+            this.TempLineChart.labels.shift();
+            this.TempLineChart.datasets[0].data.shift();
+          }
+          // this.$refs.templineChart.renderChart();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
 };
 </script>
 
@@ -87,7 +127,7 @@ export default {
 }
 .graph_2{
   border: 1px solid blue;
-  width: 20%;
+  width: 50%;
   height: 50%;
   position: relative;
 }
@@ -100,7 +140,7 @@ export default {
 }
 .line_g{
   border: 1px solid pink;
-  width: 50%;
+  width: 100%;
   height: 50%;
   position: relative;
 }
