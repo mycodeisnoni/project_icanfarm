@@ -10,7 +10,6 @@ import Chart from 'chart.js/auto';
 export default {
   name: 'LineChart',
   props: {
-    chart: null,
     chartData: {
       type: Object,
       required: true,
@@ -30,31 +29,32 @@ export default {
     this.renderChart();
   },
   beforeUpdate() {
-    // if (this.chart) {
-    //   this.chart.destroy();
-    //   this.chart = null;
-    // }
-    this.renderChart();
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
   },
   beforeDestroy() {
-    if (this.lineChart) {
-      this.lineChart.destroy();
+    if (this.chart) {
+      this.chart.destroy();
       this.chart = null;
     }
   },
   methods: {
     renderChart() {
       if (this.chart) {
-        this.chart.destroy();
+        this.chart.data.datasets = this.chartData.datasets;
+        this.chart.update();
+        return;
       }
+
       const canvas = this.$refs.lineChart;
-      this.lineChart = new Chart(canvas, {
+      this.chart = new Chart(canvas, {
         type: 'line',
         data: this.chartData,
         options: this.chartOptions,
       });
     },
   },
-
 };
 </script>
