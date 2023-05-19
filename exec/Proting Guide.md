@@ -98,3 +98,22 @@ db.farmSensor.insertOne(
 ```
 
 ## MariaDB 접속 + 조회
+
+```jsx
+# mariaDB docekr접속
+sudo docker exec -it farm-maria bash
+
+## farm-maria 아닐수도 있는데 그럴땐
+## sudo docker ps로 이름 확인해줘,,
+
+# mariadb client 접속
+mysql -u root -p
+# 비밀번호 적어주면 됨
+
+## DB랑 테이블 이름 잘 생각 안나니 틀릴 경우 한 번씩 확인해보고 쿼리 날리면 됑 ㅎ
+show databases;
+use farmData;
+
+show tables;
+select * from member;
+```
