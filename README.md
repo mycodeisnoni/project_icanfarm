@@ -71,7 +71,9 @@ CAN통신을 활용한 스마트허브 구축을 통한 스마트팜 프로토�
 ## 🥦 기능별 세부 사항
 
 ---
+### 모듈별 기능
 ![Module Process](./Docs/Module_Process.png) 
+
 
 #### 메인 허브
 - DB의 설정 데이터 변경을 인식해서 보드 제어 명령 송신
@@ -103,16 +105,21 @@ CAN통신을 활용한 스마트허브 구축을 통한 스마트팜 프로토�
 
 
 ## 🥦 I CAN FARM 상세페이지
+---
 
-#### Mockup
+#### 🌽 Login
 ![Login](/Docs/Detail_Pages/Login.png)
+#### 🌽 Apply
 ![Apply](/Docs/Detail_Pages/Apply.png)
+#### 🌽 Main
 ![Main](/Docs/Detail_Pages/Main.png)
 
 ## 🥦 주요 기술
 
 ---
+#### 🌽 System Architecture
 ![System Architecture](./Docs/System_Architecture.png)
+#### 🌽 HW System Architecture
 ![HW System Architecture](./Docs/HW_architecture.png)
 
 
@@ -130,7 +137,7 @@ CAN통신을 활용한 스마트허브 구축을 통한 스마트팜 프로토�
 
   
 
-## 🌽 협업 환경
+## 🥦 협업 환경
 
 ---
 
@@ -156,7 +163,7 @@ CAN통신을 활용한 스마트허브 구축을 통한 스마트팜 프로토�
   - 그라운드 룰 명시
   
     
-## 🌽 팀원 역할 분배
+## 🥦 팀원 역할 분배
 
 ---
 - 주해린 : 팀장, Embedded
